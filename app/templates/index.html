@@ -1,1 +1,29 @@
-index
+{% extends 'base.html' %}
+
+{% block title %}MailFilter-Top{% endblock %}
+
+{% block content %}
+    <!-- 内容部 -->
+    <main class="container my-5">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">問い合わせメール</h5>
+                        <p class="card-text">問い合わせメールの一覧画面を表示します。</p>
+                        <a href="{{ url_for('list_contact_emails') }}" class="btn btn-primary">詳細を見る</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">求人関係メール</h5>
+                        <p class="card-text">求人関係メールの一覧画面を表示します。</p>
+                        <a href="{{ url_for('list_job_emails') }}" class="btn btn-primary">詳細を見る</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
