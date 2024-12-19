@@ -6,7 +6,7 @@ import pytz
 from dotenv import load_dotenv
 from pytz.tzinfo import BaseTzInfo
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir: str = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, ".env"))
 
 

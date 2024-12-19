@@ -4,8 +4,8 @@ from app import db
 from config import Config
 
 
-class ContactEmail(db.Model):
-    __tablename__ = "contact_emails"
+class ContactEmail(db.Model):  # type: ignore
+    __tablename__: str = "contact_emails"
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     contact_type: int = db.Column(db.Integer, nullable=False)
@@ -20,8 +20,8 @@ class ContactEmail(db.Model):
     updated_at: datetime = db.Column(db.DateTime, nullable=False, default=Config.now_jst, onupdate=Config.now_jst)
 
 
-class JobEmail(db.Model):
-    __tablename__ = "job_emails"
+class JobEmail(db.Model):  # type: ignore
+    __tablename__: str = "job_emails"
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     subject: str = db.Column(db.String(200), nullable=False)
