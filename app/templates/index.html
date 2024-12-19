@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}MailFilter-Top{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" type='text/css' href="{{url_for('static', filename='css/card.css')}}">
+{% endblock %}
+
+{% block content %}
+<main class="container my-5">
+    <div class="row">
+        <!-- 問い合わせメールカード -->
+        <div class="col-md-6 mb-4">
+            <div class="card bg-light">
+                <a href="{{ url_for('list_contact_emails') }}" class="text-decoration-none text-dark card-for-link">
+                    <div class="card-body text-center">
+                        <i class="bi bi-robot display-1"></i>
+                        <h5 class="card-title mt-3">問い合わせメール</h5>
+                        <p class="card-text">問い合わせメールの一覧画面を表示します。</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!-- 求人関係メールカード -->
+        <div class="col-md-6 mb-4">
+            <div class="card bg-light">
+                <a href="{{ url_for('list_job_emails') }}" class="text-decoration-none text-dark card-for-link">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people-fill display-1"></i>
+                        <h5 class="card-title mt-3">求人関係メール</h5>
+                        <p class="card-text">求人関係メールの一覧画面を表示します。</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
