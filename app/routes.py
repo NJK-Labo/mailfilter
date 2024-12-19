@@ -27,6 +27,7 @@ def list_job_emails() -> str:
 
 @app.errorhandler(NotFound)
 def show_404_page(error: HTTPException) -> tuple[str, int]:
+    """404 NotFoundエラー画面"""
     msg: str | None = error.description
     logger.error("404エラー: %s", msg)
     return render_template("errors/404.html"), 404
@@ -34,6 +35,7 @@ def show_404_page(error: HTTPException) -> tuple[str, int]:
 
 @app.errorhandler(InternalServerError)
 def show_500_page(error: HTTPException) -> tuple[str, int]:
+    """500 内部サーバーエラー画面"""
     msg: str | None = error.description
     logger.error("500エラー: %s", msg)
     return render_template("errors/500.html"), 500

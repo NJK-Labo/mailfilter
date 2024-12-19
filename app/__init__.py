@@ -9,6 +9,7 @@ db: SQLAlchemy = SQLAlchemy()
 
 
 def create_app(config_name: str) -> Flask:
+    """アプリ作成用ファクトリ"""
     app: Flask = Flask(__name__)
     app.config.from_object(config[config_name])
 

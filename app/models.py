@@ -5,6 +5,8 @@ from config import Config
 
 
 class ContactEmail(db.Model):  # type: ignore
+    """問い合わせメール"""
+
     __tablename__: str = "contact_emails"
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -21,6 +23,8 @@ class ContactEmail(db.Model):  # type: ignore
 
 
 class JobEmail(db.Model):  # type: ignore
+    """求人関連メール"""
+
     __tablename__: str = "job_emails"
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
