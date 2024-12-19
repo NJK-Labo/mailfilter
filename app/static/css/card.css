@@ -1,0 +1,9 @@
+/* 通常時のカードの背景色 */
+.card-for-link {
+    transition: background-color 0.3s ease; /* スムーズな色の変化 */
+}
+
+/* マウスがホバーしたときの背景色 */
+.card-for-link:hover {
+    background-color: #e1e9f1; /* ホバーカラー */
+}
