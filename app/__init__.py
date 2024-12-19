@@ -1,8 +1,11 @@
 import logging
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 from config import config
+
+db: SQLAlchemy = SQLAlchemy()
 
 
 def create_app(config_name: str) -> Flask:
@@ -21,6 +24,8 @@ def create_app(config_name: str) -> Flask:
 
     # ルートのインポート
     with app.app_context():
-        from . import routes
+        from . import routes  # noqa: F401
+
+    db.init_app(app)
 
     return app
