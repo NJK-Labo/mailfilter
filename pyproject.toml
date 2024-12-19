@@ -8,6 +8,8 @@ requires-python = ">=3.13"
 dependencies = [
     "flask>=3.1.0",
     "python-dotenv>=1.0.1",
+    "pytz>=2024.2",
+    "types-pytz>=2024.2.0.20241003",
 ]
 
 [tool.ruff]

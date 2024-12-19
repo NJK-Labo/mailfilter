@@ -1,7 +1,10 @@
 import os
-from typing import Dict, Type, Union
+from datetime import datetime
+from typing import ClassVar, Dict, Type, Union
 
+import pytz
 from dotenv import load_dotenv
+from pytz.tzinfo import BaseTzInfo
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, ".env"))
@@ -13,6 +16,13 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
     DEBUG: bool = False
     TESTING: bool = False
+
+    TIMEZONE: ClassVar[BaseTzInfo] = pytz.timezone("Asia/Tokyo")
+
+    @staticmethod
+    def now_jst() -> datetime:
+        """現在のJST時刻を返す"""
+        return datetime.now(Config.TIMEZONE)
 
 
 class DevelopmentConfig(Config):
