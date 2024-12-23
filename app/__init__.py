@@ -4,6 +4,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+from app.filters import contact_type_filter
 from config import config
 
 db: SQLAlchemy = SQLAlchemy()
@@ -36,7 +37,11 @@ def create_app(config_name: str | None = None) -> Flask:
     with app.app_context():
         from app import models  # noqa: F401
 
+    # db設定
     db.init_app(app)
     migrate.init_app(app, db)
+
+    # フィルターの登録
+    app.jinja_env.filters["contact_type"] = contact_type_filter
 
     return app

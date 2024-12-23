@@ -1,1 +1,36 @@
-list_job_emails
+{% extends 'base.html' %}
+
+{% block title %}MailFilter-求人関係メール一覧{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5">
+
+    <!-- タイトル -->
+    <div class="d-flex align-items-center mb-4">
+        <i class="bi bi-people-fill text-primary fs-3 me-2"></i>
+        <h1 class="h3 mb-0">求人関係メール一覧</h1>
+    </div>
+  
+    <!-- 一覧 -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>受信日時</th>
+                <th>内容</th>
+                <th>送信元メールアドレス</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mail in mails %}
+            <tr>
+                <td><a href="#" class="text-decoration-none">詳細</a></td>
+                <td>{{mail.received_at}}</td>
+                <td>{{mail.content| truncate(30, end='...')}}</td>
+                <td>{{mail.email}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
