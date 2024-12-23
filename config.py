@@ -18,6 +18,9 @@ load_dotenv(os.path.join(basedir, ".env"))
 
 
 class Config:
+    FLASK_CONFIG: str = os.environ.get("FLASK_CONFIG", "development")
+    FLASK_ENV: str = os.environ.get("FLASK_ENV", "development")
+
     SECRET_KEY: str | None = os.environ.get("SECRET_KEY")
     if SECRET_KEY is None:
         raise ConfigError("環境変数にSECRET_KEYが登録されていません")
