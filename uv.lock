@@ -129,6 +129,7 @@ dependencies = [
     { name = "pymysql" },
     { name = "python-dotenv" },
     { name = "pytz" },
+    { name = "types-flask-migrate" },
     { name = "types-pytz" },
 ]
 
@@ -145,6 +146,7 @@ requires-dist = [
     { name = "pymysql", specifier = ">=1.1.1" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "pytz", specifier = ">=2024.2" },
+    { name = "types-flask-migrate", specifier = ">=4.0.0.20241204" },
     { name = "types-pytz", specifier = ">=2024.2.0.20241003" },
 ]
 
@@ -269,6 +271,19 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/a1/95/81babb6089938680dfe2cd3f88cd3fd39cccd1543b7cb603b21ad881bff1/SQLAlchemy-2.0.36-cp313-cp313-win32.whl", hash = "sha256:0572f4bd6f94752167adfd7c1bed84f4b240ee6203a95e05d1e208d488d0d436", size = 2060439 },
     { url = "https://files.pythonhosted.org/packages/c1/ce/5f7428df55660d6879d0522adc73a3364970b5ef33ec17fa125c5dbcac1d/SQLAlchemy-2.0.36-cp313-cp313-win_amd64.whl", hash = "sha256:8c78ac40bde930c60e0f78b3cd184c580f89456dd87fc08f9e3ee3ce8765ce88", size = 2084574 },
     { url = "https://files.pythonhosted.org/packages/b8/49/21633706dd6feb14cd3f7935fc00b60870ea057686035e1a99ae6d9d9d53/SQLAlchemy-2.0.36-py3-none-any.whl", hash = "sha256:fddbe92b4760c6f5d48162aef14824add991aeda8ddadb3c31d56eb15ca69f8e", size = 1883787 },
+]
+
+[[package]]
+name = "types-flask-migrate"
+version = "4.0.0.20241204"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "flask" },
+    { name = "flask-sqlalchemy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c9/5e/befee1292065dd6b9b86c3a1c7edfd3270bfcd32e9aa713b4842e2e88696/types_flask_migrate-4.0.0.20241204.tar.gz", hash = "sha256:933fea86e2d8d9eb2aea066a70a19b072abff4ea17e3b7af386c0e64973fc3e9", size = 8526 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4e/e1/7e729646a50c6167ea91b28bcbf7545849ad471ffb17ee62323efca9baee/types_Flask_Migrate-4.0.0.20241204-py3-none-any.whl", hash = "sha256:31eddb6e633336ad181cd50cd46001a45a74d194f62945fa516740f93b48d832", size = 8670 },
 ]
 
 [[package]]

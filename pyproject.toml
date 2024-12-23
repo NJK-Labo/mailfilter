@@ -12,6 +12,7 @@ dependencies = [
     "pymysql>=1.1.1",
     "python-dotenv>=1.0.1",
     "pytz>=2024.2",
+    "types-flask-migrate>=4.0.0.20241204",
     "types-pytz>=2024.2.0.20241003",
 ]
 
