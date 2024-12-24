@@ -26,7 +26,7 @@
             <tr>
                 <td><a href="#" class="text-decoration-none">詳細</a></td>
                 <td>{{mail.received_at}}</td>
-                <td>{{mail.content| truncate(30, end='...')}}</td>
+                <td>{{mail.content| truncate(50, end='...')}}</td>
                 <td>{{mail.email}}</td>
             </tr>
             {% endfor %}

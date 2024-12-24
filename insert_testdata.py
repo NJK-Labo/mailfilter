@@ -47,7 +47,7 @@ def insert_sample_data():
             sample_records.append(
                 ContactEmail(
                     contact_type=random.randint(1, 5),  # ランダムな問い合わせ種別 (1〜5)
-                    content=f"これはサンプルデータの問い合わせ内容 {i} 番目です。",
+                    content=f"これはサンプルデータの問い合わせ内容 {i} 番目です。" * 10,
                     name=f"テストユーザー{i}",
                     kana=f"テスト ユーザー{i}",
                     email=f"user{i}@example.com",
@@ -63,7 +63,7 @@ def insert_sample_data():
                 JobEmail(
                     subject=f"サンプルデータの件名 {i} 番目",
                     email=f"user{i}@example.com",
-                    content=f"これはサンプルデータの求人内容 {i} 番目です。",
+                    content=f"これはサンプルデータの求人内容 {i} 番目です。" * 10,
                     received_at=received_at,
                 )
             )
