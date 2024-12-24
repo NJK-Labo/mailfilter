@@ -6,8 +6,15 @@ readme = "README.md"
 requires-python = ">=3.13"
 
 dependencies = [
+    "cryptography>=44.0.0",
+    "flask-migrate>=4.0.7",
+    "flask-sqlalchemy>=3.1.1",
     "flask>=3.1.0",
+    "pymysql>=1.1.1",
     "python-dotenv>=1.0.1",
+    "pytz>=2024.2",
+    "types-flask-migrate>=4.0.0.20241204",
+    "types-pytz>=2024.2.0.20241003",
 ]
 
 [tool.ruff]
@@ -17,7 +24,7 @@ exclude = [
 ]
 line-length = 119
 indent-width = 4
-target-version = "py310"
+target-version = "py313"
 
 [tool.ruff.lint]
 select = [

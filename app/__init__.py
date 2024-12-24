@@ -1,12 +1,22 @@
 import logging
 
 from flask import Flask
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
+from app.filters import contact_type_filter
 from config import config
 
+db: SQLAlchemy = SQLAlchemy()
+migrate = Migrate()
 
-def create_app(config_name: str) -> Flask:
+
+def create_app(config_name: str | None = None) -> Flask:
+    """アプリ作成用ファクトリ"""
+
     app: Flask = Flask(__name__)
+    if config_name is None:
+        config_name = app.config.get("FLASK_CONFIG", "default")
     app.config.from_object(config[config_name])
 
     # ロガーの設定
@@ -19,8 +29,18 @@ def create_app(config_name: str) -> Flask:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    # ルートのインポート
+    # 各設定のインポート
     with app.app_context():
-        from . import routes
+        from app import (
+            models,  # noqa: F401
+            routes,  # noqa: F401
+        )
+
+    # db設定
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+    # フィルターの登録
+    app.jinja_env.filters["contact_type"] = contact_type_filter
 
     return app
