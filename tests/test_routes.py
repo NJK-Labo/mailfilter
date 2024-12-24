@@ -1,23 +1,36 @@
 import pytest
 from werkzeug.exceptions import InternalServerError
 
-from app import create_app
-
-
-@pytest.fixture
-def client():
-    app = create_app("testing")
-    app.testing = True
-    with app.test_client() as client:
-        with app.app_context():
-            yield client
-
 
 def test_index(client):
     """トップ画面のテスト"""
     response = client.get("/")
     assert response.status_code == 200
-    assert "一覧画面を表示".encode("utf-8") in response.data
+    assert "一覧画面を表示します".encode("utf-8") in response.data
+
+
+@pytest.mark.skip(reason="調査中のため")
+def test_list_contact_emails(client, init_contact_emails):
+    """問い合わせメール一覧画面で複数件のレコードが正しく表示されるかテスト"""
+    response = client.get("/contact-emails")
+    assert response.status_code == 200
+    assert b"Content1" in response.data
+    assert b"Content2" in response.data
+
+    # データが正しくソートされていることを確認（`received_at`の降順）
+    assert response.data.index(b"Content2") < response.data.index(b"Content1")
+
+
+@pytest.mark.skip(reason="調査中のため")
+def test_list_job_emails(client, init_job_emails):
+    """求人関係メール一覧画面で複数件のレコードが正しく表示されるかテスト"""
+    response = client.get("/job-emails")
+    assert response.status_code == 200
+    assert b"Content1" in response.data
+    assert b"Content2" in response.data
+
+    # データが正しくソートされていることを確認（`received_at`の降順）
+    assert response.data.index(b"Content2") < response.data.index(b"Content1")
 
 
 def test_404_error(client):

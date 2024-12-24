@@ -29,13 +29,12 @@ def create_app(config_name: str | None = None) -> Flask:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    # ルートのインポート
+    # 各設定のインポート
     with app.app_context():
-        from . import routes  # noqa: F401
-
-    # モデルのインポート
-    with app.app_context():
-        from app import models  # noqa: F401
+        from app import (
+            models,  # noqa: F401
+            routes,  # noqa: F401
+        )
 
     # db設定
     db.init_app(app)
