@@ -8,3 +8,12 @@ def contact_type_filter(value):
         5: "その他",
     }
     return mapping.get(value, "不明")
+
+
+def gender_filter(value):
+    """gender を数値から対応する名前に変換する"""
+    mapping = {
+        1: "男性",
+        2: "女性",
+    }
+    return mapping.get(value, "不明")

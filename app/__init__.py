@@ -4,7 +4,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from app.filters import contact_type_filter
+from app.filters import contact_type_filter, gender_filter
 from config import config
 
 db: SQLAlchemy = SQLAlchemy()
@@ -42,5 +42,6 @@ def create_app(config_name: str | None = None) -> Flask:
 
     # フィルターの登録
     app.jinja_env.filters["contact_type"] = contact_type_filter
+    app.jinja_env.filters["gender"] = gender_filter
 
     return app

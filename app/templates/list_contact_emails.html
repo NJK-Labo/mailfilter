@@ -16,15 +16,15 @@
             <tr>
                 <th></th>
                 <th>受信日時</th>
-                <th>種別</th>
-                <th>内容</th>
+                <th>問い合わせ種別</th>
+                <th>問い合わせ内容</th>
                 <th>送信元メールアドレス</th>
             </tr>
         </thead>
         <tbody>
             {% for mail in mails %}
             <tr>
-                <td><a href="#" class="text-decoration-none">詳細</a></td>
+                <td><a href="{{ url_for('show_contact_email', id=mail.id) }}" class="text-decoration-none">詳細</a></td>
                 <td>{{mail.received_at}}</td>
                 <td>{{mail.contact_type | contact_type}}</td>
                 <td>{{mail.content | truncate(30, end='...')}}</td>
