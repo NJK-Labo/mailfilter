@@ -23,6 +23,11 @@ from app.models import ContactEmail, JobEmail
 app = create_app("development")
 
 
+def to_fullwidth_numbers(s):
+    # 半角数字 (0x30 - 0x39) を全角数字 (0xFF10 - 0xFF19) に変換
+    return s.translate(str.maketrans("0123456789", "０１２３４５６７８９"))
+
+
 def insert_sample_data():
     """サンプルデータを挿入する関数"""
     with app.app_context():
@@ -48,8 +53,8 @@ def insert_sample_data():
                 ContactEmail(
                     contact_type=random.randint(1, 5),  # ランダムな問い合わせ種別 (1〜5)
                     content=f"これはサンプルデータの問い合わせ内容 {i} 番目です。" * 10,
-                    name=f"テストユーザー{i}",
-                    kana=f"テスト ユーザー{i}",
+                    name=to_fullwidth_numbers(f"テストユーザー{i}"),
+                    kana="テストユーザー",
                     email=f"user{i}@example.com",
                     gender=random.choice([1, 2]),  # ランダムな性別 (1=男性, 2=女性)
                     ip=f"192.168.1.{i}",  # IPアドレスをユニークにする

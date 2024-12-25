@@ -7,6 +7,7 @@ from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 from app.models import ContactEmail, JobEmail
 
 logger: logging.Logger = logging.getLogger(__name__)
+from app import db  # noqa: E402
 
 
 @app.route("/")
@@ -22,11 +23,25 @@ def list_contact_emails() -> str:
     return render_template("list_contact_emails.html", mails=mails)
 
 
+@app.route("/contact-emails/<int:id>", methods=["GET"])
+def show_contact_email(id):
+    """問い合わせメール詳細画面"""
+    mail = db.session.get(ContactEmail, id)
+    return render_template("show_contact_email.html", mail=mail)
+
+
 @app.route("/job-emails")
 def list_job_emails() -> str:
     """求人関係メール一覧画面"""
     mails = JobEmail.query.order_by(JobEmail.received_at.desc()).all()  # type: ignore
     return render_template("list_job_emails.html", mails=mails)
+
+
+@app.route("/job-emails/<int:id>", methods=["GET"])
+def show_job_email(id):
+    """求人関係メール詳細画面"""
+    mail = db.session.get(JobEmail, id)
+    return render_template("show_job_email.html", mail=mail)
 
 
 @app.errorhandler(NotFound)

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}MailFilter-問い合わせメール詳細{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5">
+    <!-- タイトル -->
+    <div class="d-flex align-items-center mb-4">
+        <i class="bi bi-robot text-primary fs-3 me-2"></i>
+        <h1 class="h3 mb-0">問い合わせメール詳細</h1>
+    </div>
+    <div class="card">
+        <div class="card-header">詳細情報</div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><dt>ID</dt><dd>{{mail.id}}</dd></li>
+            <li class="list-group-item"><dt>問い合わせ種別</dt><dd>{{mail.contact_type | contact_type}}</dd></li>
+            <li class="list-group-item"><dt>問い合わせ内容</dt><dd class="preformatted">{{mail.content}}</dd></li>
+            <li class="list-group-item"><dt>お名前</dt><dd>{{mail.name}}</dd></li>
+            <li class="list-group-item"><dt>よみがな</dt><dd>{{mail.kana}}</dd></li>
+            <li class="list-group-item"><dt>メールアドレス</dt><dd>{{mail.email}}</dd></li>
+            <li class="list-group-item"><dt>性別</dt><dd>{{mail.gender | gender}}</dd></li>
+            <li class="list-group-item"><dt>送信元IPアドレス</dt><dd>{{mail.ip}}</dd></li>
+            <li class="list-group-item"><dt>受信日時</dt><dd>{{mail.received_at}}</dd></li>
+        </ul>
+    </div>
+    <div class="card-footer my-3">
+        <a id="backToList" href="{{ url_for('list_contact_emails') }}" class=" btn btn-outline-primary">一覧に戻る</a>
+    </div>
+</div>
+{% endblock %}
