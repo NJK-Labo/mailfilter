@@ -28,16 +28,16 @@ def list_contact_emails() -> str:
 @app.route("/contact-emails/<int:id>", methods=["GET"])
 def show_contact_email(id):
     """問い合わせメール詳細画面"""
-    form = JobEmailSearchForm()
     mail = db.session.get(ContactEmail, id)
-    return render_template("show_contact_email.html", mail=mail, form=form)
+    return render_template("show_contact_email.html", mail=mail)
 
 
 @app.route("/job-emails")
 def list_job_emails() -> str:
     """求人関係メール一覧画面"""
+    form = JobEmailSearchForm()
     mails = JobEmail.query.order_by(JobEmail.received_at.desc()).all()  # type: ignore
-    return render_template("list_job_emails.html", mails=mails)
+    return render_template("list_job_emails.html", mails=mails, form=form)
 
 
 @app.route("/job-emails/<int:id>", methods=["GET"])
