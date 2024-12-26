@@ -10,6 +10,34 @@
         <h1 class="h3 mb-0">問い合わせメール一覧</h1>
     </div>
   
+    <!-- 検索フォーム -->
+    <div class="container mt-5">
+        <form id="searchForm" class="row g-3 mb-5" method="GET" action="{{ url_for('list_contact_emails') }}">
+            <p class="h5 fw-light">検索条件を入力してください</p>
+            <div class="col-md-9">         
+                <div class="mb-3">
+                    {{ form.keyword(id="keyword", class="form-control") }}
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        {{ form.start_date(id="start_date", class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.end_date(id="end_date", class="form-control") }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    {{ form.type(id="type", class="form-select") }}
+                </div>
+            </div>
+            <div class="col-md-3 d-flex flex-column justify-content-end mb-3">
+                {{ form.search(id="execute", class="btn btn-success mb-2 w-100") }}
+                <button type="button" id="clear" class="btn btn-warning mb-2 w-100" onclick="resetForm()">クリア</button>
+                <button type="button" id="delete" class="btn btn-danger w-100">削除</button>
+            </div>
+        </form>
+    </div>
+
     <!-- メール一覧 -->
     <table class="table table-striped">
         <thead>
@@ -34,4 +62,9 @@
         </tbody>
     </table>
 </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{{url_for('static', filename='js/set_selectbox_color.js')}}"></script>
+    <script src="{{url_for('static', filename='js/set_date_placeholder.js')}}"></script>
 {% endblock %}

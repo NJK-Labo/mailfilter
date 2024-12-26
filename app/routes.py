@@ -8,6 +8,7 @@ from app.models import ContactEmail, JobEmail
 
 logger: logging.Logger = logging.getLogger(__name__)
 from app import db  # noqa: E402
+from app.forms import ContactEmailSearchForm, JobEmailSearchForm  # noqa: E402
 
 
 @app.route("/")
@@ -19,15 +20,17 @@ def index() -> str:
 @app.route("/contact-emails")
 def list_contact_emails() -> str:
     """問い合わせメール一覧画面"""
+    form = ContactEmailSearchForm()
     mails = ContactEmail.query.order_by(ContactEmail.received_at.desc()).all()  # type: ignore
-    return render_template("list_contact_emails.html", mails=mails)
+    return render_template("list_contact_emails.html", mails=mails, form=form)
 
 
 @app.route("/contact-emails/<int:id>", methods=["GET"])
 def show_contact_email(id):
     """問い合わせメール詳細画面"""
+    form = JobEmailSearchForm()
     mail = db.session.get(ContactEmail, id)
-    return render_template("show_contact_email.html", mail=mail)
+    return render_template("show_contact_email.html", mail=mail, form=form)
 
 
 @app.route("/job-emails")
