@@ -1,6 +1,6 @@
 // セレクトボックスの選択肢の文字色を変更する
 // CSSで指定が難しかったため、JavaScriptで実装
-const selectElement = document.getElementById('type');
+const selectElement = document.querySelector('#type');
 
 // 文字色の設定
 const updateColor = () => {

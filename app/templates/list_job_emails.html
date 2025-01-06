@@ -2,6 +2,10 @@
 
 {% block title %}MailFilter-求人関係メール一覧{% endblock %}
 
+{% block script %}
+    <script src="{{url_for('static', filename='js/set_date_placeholder.js')}}" type="module"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-5">
     <!-- タイトル -->
@@ -57,8 +61,4 @@
         </tbody>
     </table>
 </div>
-{% endblock %}
-
-{% block script %}
-    <script src="{{url_for('static', filename='js/set_date_placeholder.js')}}"></script>
 {% endblock %}

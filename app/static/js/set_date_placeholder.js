@@ -2,7 +2,7 @@
 // 日付入力フィールドはプレースホルダーを表示できないため、
 // 入力されていない時はtype=textに変えてプレースホルダーを表示する
 const setupDateInput = (id, placeholderText) => {
-    const dateInput = document.getElementById(id);
+    const dateInput = document.querySelector(`#${id}`);
 
     const toggleType = (isFocus) => {
         dateInput.type = isFocus ? 'date' : 'text';
