@@ -31,10 +31,10 @@ def create_app(config_name: str | None = None) -> Flask:
 
     # 各設定のインポート
     with app.app_context():
-        from app import (
-            models,  # noqa: F401
-            routes,  # noqa: F401
-        )
+        from . import models  # noqa: F401
+        from .routes import bp
+
+        app.register_blueprint(bp)
 
     # db設定
     db.init_app(app)

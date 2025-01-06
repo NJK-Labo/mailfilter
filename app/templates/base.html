@@ -16,7 +16,7 @@
     <header class="bg-secondary text-white p-3">
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url_for('index') }}">
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">
                     <i class="bi bi-envelope-fill"></i> MailFilter
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,10 +25,10 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('list_contact_emails') }}" >問い合わせメール</a>
+                            <a class="nav-link" href="{{ url_for('main.list_contact_emails') }}" >問い合わせメール</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('list_job_emails') }}">求人関係メール</a>
+                            <a class="nav-link" href="{{ url_for('main.list_job_emails') }}">求人関係メール</a>
                         </li>
                     </ul>
                 </div>
