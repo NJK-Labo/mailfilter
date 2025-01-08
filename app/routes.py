@@ -1,15 +1,17 @@
 import logging
 
-from flask import Blueprint, render_template
+from flask import Blueprint, redirect, render_template, request, url_for
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
 from app.models import ContactEmail, JobEmail
 
 bp = Blueprint("main", __name__)
 
-logger: logging.Logger = logging.getLogger(__name__)
 from app import db  # noqa: E402
 from app.forms import ContactEmailSearchForm, JobEmailSearchForm  # noqa: E402
+from app.services import search_contact_emails, search_job_emails, validate_input  # noqa: E402
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 @bp.route("/")
@@ -18,11 +20,19 @@ def index() -> str:
     return render_template("index.html")
 
 
-@bp.route("/contact-emails")
+@bp.route("/contact-emails", methods=["GET"])
 def list_contact_emails() -> str:
     """問い合わせメール一覧画面"""
-    form = ContactEmailSearchForm()
-    mails = ContactEmail.query.order_by(ContactEmail.received_at.desc()).all()  # type: ignore
+    form = ContactEmailSearchForm(request.args)
+
+    # 検索フォームの不正な入力値をクリア
+    is_valid, cleaned_params = validate_input(form)
+
+    if not is_valid:
+        # 不正な値のクエリパラメータをクリアするためのリダイレクト
+        return redirect(url_for("main.list_contact_emails", **cleaned_params))  # type: ignore
+
+    mails = search_contact_emails(form)
     return render_template("list_contact_emails.html", mails=mails, form=form)
 
 
@@ -36,8 +46,16 @@ def show_contact_email(id):
 @bp.route("/job-emails")
 def list_job_emails() -> str:
     """求人関係メール一覧画面"""
-    form = JobEmailSearchForm()
-    mails = JobEmail.query.order_by(JobEmail.received_at.desc()).all()  # type: ignore
+    form = JobEmailSearchForm(request.args)
+
+    # 検索フォームの日付の不正な入力値をクリア
+    is_valid, cleaned_params = validate_input(form)
+
+    if not is_valid:
+        # 不正な値のクエリパラメータをクリアするためのリダイレクト
+        return redirect(url_for("main.list_job_emails", **cleaned_params))  # type: ignore
+
+    mails = search_job_emails(form)
     return render_template("list_job_emails.html", mails=mails, form=form)
 
 

@@ -13,7 +13,7 @@ class ContactEmail(db.Model):  # type: ignore
     # 問い合わせ種別
     # （1: 採用情報について, 2: 取り扱い製品について, 3: 事業内容について, 4: プライバシーポリシーについて, 5: その他）
     contact_type: int = db.Column(db.Integer, nullable=False)
-    content: str = db.Column(db.Text, nullable=False)
+    content: str = db.Column(db.Text(3000), nullable=False)
     name: str = db.Column(db.String(200), nullable=False)
     kana: str = db.Column(db.String(200), nullable=False)
     email: str = db.Column(db.String(200), nullable=False)
