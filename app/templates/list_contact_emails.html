@@ -5,6 +5,7 @@
 {% block script %}
     <script src="{{url_for('static', filename='js/set_date_placeholder.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/set_selectbox_color.js')}}" type="module"></script>
+    <script src="{{url_for('static', filename='js/reset_form.js')}}" type="module"></script>
 {% endblock %}
 
 {% block content %}
@@ -37,7 +38,7 @@
             </div>
             <div class="col-md-3 d-flex flex-column justify-content-end mb-3">
                 {{ form.search(id="execute", class="btn btn-success mb-2 w-100") }}
-                <button type="button" id="clear" class="btn btn-warning mb-2 w-100" onclick="resetForm()">クリア</button>
+                <button type="button" id="clear" class="btn btn-warning mb-2 w-100">クリア</button>
                 <button type="button" id="delete" class="btn btn-danger w-100">削除</button>
             </div>
         </form>
