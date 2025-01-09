@@ -1,4 +1,3 @@
-import pytest
 from werkzeug.exceptions import InternalServerError
 
 
@@ -9,7 +8,6 @@ def test_index(client):
     assert "一覧画面を表示します".encode("utf-8") in response.data
 
 
-@pytest.mark.skip(reason="調査中のため")
 def test_list_contact_emails(client, init_contact_emails):
     """問い合わせメール一覧画面で複数件のレコードが正しく表示されるかテスト"""
     response = client.get("/contact-emails")
@@ -21,7 +19,6 @@ def test_list_contact_emails(client, init_contact_emails):
     assert response.data.index(b"Content2") < response.data.index(b"Content1")
 
 
-@pytest.mark.skip(reason="調査中のため")
 def test_list_job_emails(client, init_job_emails):
     """求人関係メール一覧画面で複数件のレコードが正しく表示されるかテスト"""
     response = client.get("/job-emails")
@@ -33,7 +30,6 @@ def test_list_job_emails(client, init_job_emails):
     assert response.data.index(b"Content2") < response.data.index(b"Content1")
 
 
-@pytest.mark.skip(reason="調査中のため")
 def test_show_contact_email(client, init_contact_emails):
     """問い合わせメール詳細画面のテスト"""
     response = client.get("/contact-emails/1")
@@ -42,7 +38,6 @@ def test_show_contact_email(client, init_contact_emails):
     assert b"testemail1" in response.data
 
 
-@pytest.mark.skip(reason="調査中のため")
 def test_show_job_email(client, init_job_emails):
     """求人関係メール詳細画面のテスト"""
     response = client.get("/job-emails/1")
@@ -55,7 +50,7 @@ def test_404_error(client):
     """404エラーのハンドラテスト"""
     response = client.get("/non-existent-page")
     assert response.status_code == 404
-    assert b"404 Not Found" in response.data
+    assert "お探しのページは見つかりませんでした".encode("utf-8") in response.data
 
 
 def test_500_error(client):
@@ -67,4 +62,4 @@ def test_500_error(client):
 
     response = client.get("/cause-error")
     assert response.status_code == 500
-    assert b"Internal Server Error" in response.data
+    assert "サーバーエラーが発生しました".encode("utf-8") in response.data
