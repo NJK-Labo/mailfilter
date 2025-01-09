@@ -2,6 +2,10 @@
 
 {% block title %}MailFilter-問い合わせメール詳細{% endblock %}
 
+{% block script %}
+<script src="{{url_for('static', filename='js/restore_contact_emails_search_conditions.js')}}" type="module"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-5">
     <!-- タイトル -->
@@ -24,7 +28,7 @@
         </ul>
     </div>
     <div class="card-footer my-3">
-        <a id="backToList" href="{{ url_for('main.list_contact_emails') }}" class=" btn btn-outline-primary">一覧に戻る</a>
+        <a id="backToList" href="{{ url_for('main.list_contact_emails') }}" class="btn btn-outline-primary">一覧に戻る</a>
     </div>
 </div>
 {% endblock %}
