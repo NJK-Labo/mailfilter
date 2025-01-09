@@ -3,14 +3,12 @@ import logging
 from flask import Blueprint, redirect, render_template, request, url_for
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
-from app.models import ContactEmail, JobEmail
-
-bp = Blueprint("main", __name__)
-
 from app import db  # noqa: E402
 from app.forms import ContactEmailSearchForm, JobEmailSearchForm  # noqa: E402
+from app.models import ContactEmail, JobEmail
 from app.services import search_contact_emails, search_job_emails, validate_input  # noqa: E402
 
+bp = Blueprint("main", __name__)
 logger: logging.Logger = logging.getLogger(__name__)
 
 
@@ -37,9 +35,11 @@ def list_contact_emails() -> str:
 
 
 @bp.route("/contact-emails/<int:id>", methods=["GET"])
-def show_contact_email(id):
+def show_contact_email(id: int) -> str | tuple[str, int]:
     """問い合わせメール詳細画面"""
     mail = db.session.get(ContactEmail, id)
+    if not mail:
+        return render_template("errors/404.html"), 404
     return render_template("show_contact_email.html", mail=mail)
 
 
@@ -60,9 +60,11 @@ def list_job_emails() -> str:
 
 
 @bp.route("/job-emails/<int:id>", methods=["GET"])
-def show_job_email(id):
+def show_job_email(id: int) -> str | tuple[str, int]:
     """求人関係メール詳細画面"""
     mail = db.session.get(JobEmail, id)
+    if not mail:
+        return render_template("errors/404.html"), 404
     return render_template("show_job_email.html", mail=mail)
 
 
@@ -78,5 +80,5 @@ def show_404_page(error: HTTPException) -> tuple[str, int]:
 def show_500_page(error: HTTPException) -> tuple[str, int]:
     """500 内部サーバーエラー画面"""
     msg: str | None = error.description
-    logger.error("500エラー: %s", msg)
+    logger.error("500エラー: %s", msg, exc_info=True)
     return render_template("errors/500.html"), 500

@@ -1,9 +1,11 @@
 from typing import Dict, Tuple
 
+from flask_wtf import FlaskForm  # type: ignore
+
 from app.models import ContactEmail, JobEmail
 
 
-def replace_none_with_empty_string(params: Dict[str, str]) -> Dict[str, str]:
+def _replace_none_with_empty_string(params: Dict[str, str]) -> Dict[str, str]:
     """パラメータ内のNoneの値を空文字に修正する"""
     for key, value in params.items():
         if value is None:
@@ -11,7 +13,7 @@ def replace_none_with_empty_string(params: Dict[str, str]) -> Dict[str, str]:
     return params
 
 
-def validate_input(form) -> Tuple[bool, Dict[str, str]]:
+def validate_input(form: FlaskForm) -> Tuple[bool, Dict[str, str]]:
     """フォームのバリデーションを実行し、不正な値をクリアしたパラメータを返す"""
     is_valid = form.validate()
     if is_valid:
@@ -23,12 +25,12 @@ def validate_input(form) -> Tuple[bool, Dict[str, str]]:
         if getattr(form, field).errors:
             cleaned_params[field] = ""
 
-    cleaned_params = replace_none_with_empty_string(cleaned_params)
+    cleaned_params = _replace_none_with_empty_string(cleaned_params)
 
     return is_valid, cleaned_params
 
 
-def search_contact_emails(form) -> list[ContactEmail]:
+def search_contact_emails(form: FlaskForm) -> list[ContactEmail]:
     """問い合わせメールの検索ロジック"""
     query = ContactEmail.query.order_by(ContactEmail.received_at.desc())  # type: ignore
     if form.start_date.data:
@@ -48,7 +50,7 @@ def search_contact_emails(form) -> list[ContactEmail]:
     return query.all()
 
 
-def search_job_emails(form) -> list[JobEmail]:
+def search_job_emails(form: FlaskForm) -> list[JobEmail]:
     """問い合わせメールの検索ロジック"""
     query = JobEmail.query.order_by(JobEmail.received_at.desc())  # type: ignore
     if form.start_date.data:
