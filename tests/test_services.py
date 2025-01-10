@@ -42,7 +42,8 @@ def test_search_contact_emails_no_filters(client, init_contact_emails_for_search
     form.keyword.data = ""
     form.type.data = ""
 
-    results = search_contact_emails(form)
+    query = search_contact_emails(form)
+    results = query.all()
     assert len(results) == 2
 
 
@@ -54,7 +55,8 @@ def test_search_contact_emails_with_start_date(client, init_contact_emails_for_s
     form.keyword.data = ""
     form.type.data = ""
 
-    results = search_contact_emails(form)
+    query = search_contact_emails(form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 2"
 
@@ -67,7 +69,8 @@ def test_search_contact_emails_with_end_date(client, init_contact_emails_for_sea
     form.keyword.data = ""
     form.type.data = ""
 
-    results = search_contact_emails(form)
+    query = search_contact_emails(form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
 
@@ -80,7 +83,8 @@ def test_search_contact_emails_with_keyword(client, init_contact_emails_for_sear
     form.keyword.data = "content 2"
     form.type.data = ""
 
-    results = search_contact_emails(form)
+    query = search_contact_emails(form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 2"
 
@@ -93,7 +97,8 @@ def test_search_contact_emails_with_type(client, init_contact_emails_for_search)
     form.keyword.data = ""
     form.type.data = 1
 
-    results = search_contact_emails(form)
+    query = search_contact_emails(form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
 
@@ -106,7 +111,8 @@ def test_search_contact_emails_with_all_filters(client, init_contact_emails_for_
     form.keyword.data = "Test content 1"
     form.type.data = 1
 
-    results = search_contact_emails(form)
+    query = search_contact_emails(form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
 
@@ -119,7 +125,8 @@ def test_search_job_emails_no_filters(client, init_job_emails_for_search):
     form.end_date.data = ""
     form.keyword.data = ""
 
-    results = search_job_emails(form)
+    query = search_job_emails(form)
+    results = query.all()
     assert len(results) == 2
 
 
@@ -130,7 +137,8 @@ def test_search_job_emails_with_start_date(client, init_job_emails_for_search):
     form.end_date.data = ""
     form.keyword.data = ""
 
-    results = search_job_emails(form)
+    query = search_job_emails(form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 2"
 
@@ -142,7 +150,8 @@ def test_search_job_emails_with_end_date(client, init_job_emails_for_search):
     form.end_date.data = "2025-01-31"
     form.keyword.data = ""
 
-    results = search_job_emails(form)
+    query = search_job_emails(form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
 
@@ -154,7 +163,8 @@ def test_search_job_emails_with_keyword(client, init_job_emails_for_search):
     form.end_date.data = ""
     form.keyword.data = "content 2"
 
-    results = search_job_emails(form)
+    query = search_job_emails(form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 2"
 
@@ -166,6 +176,7 @@ def test_search_job_emails_with_all_filters(client, init_job_emails_for_search):
     form.end_date.data = "2025-02-01"
     form.keyword.data = "Test content 1"
 
-    results = search_job_emails(form)
+    query = search_job_emails(form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
