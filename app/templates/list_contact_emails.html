@@ -11,14 +11,15 @@
 
 {% block content %}
 <div class="container-fluid mt-5">
-    <!-- タイトル -->
-    <div class="d-flex align-items-center mb-4">
-        <i class="bi bi-robot text-primary fs-3 me-2"></i>
-        <h1 class="h3 mb-0">問い合わせメール一覧</h1>
-    </div>
-  
-    <!-- 検索フォーム -->
     <div class="container">
+        
+        <!-- タイトル -->
+        <div class="d-flex align-items-center mb-4">
+            <i class="bi bi-robot text-primary fs-3 me-2"></i>
+            <h1 class="h3 mb-0">問い合わせメール一覧</h1>
+        </div>
+  
+        <!-- 検索フォーム -->
         <form id="searchForm" class="row g-3 mb-5" method="GET" action="{{ url_for('main.list_contact_emails') }}">
             <p class="h5 fw-light">検索条件を入力してください</p>
             <div class="col-md-9">         
@@ -68,5 +69,12 @@
             {% endfor %}
         </tbody>
     </table>
+    <div class="container-fluid mt-5 mb-2">
+        <nav aria-label="Page navigation" class="row align-items-center">
+            <div class="col-4 text-start">{{ pagination.info }}</div>
+            <div class="col-4 text-center">{{ pagination.links }}</div>
+            <div class="col-4 text-end">{{ pagination.page }} / {{ pagination.pages | length }} ページ</div>
+        </nav>        
+    </div>
 </div>
 {% endblock %}

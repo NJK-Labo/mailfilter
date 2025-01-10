@@ -1,15 +1,19 @@
 import logging
 
 from flask import Blueprint, redirect, render_template, request, url_for
+from flask_paginate import get_page_parameter  # type: ignore
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
 from app import db  # noqa: E402
 from app.forms import ContactEmailSearchForm, JobEmailSearchForm  # noqa: E402
 from app.models import ContactEmail, JobEmail
-from app.services import search_contact_emails, search_job_emails, validate_input  # noqa: E402
+from app.services import paginate_query, search_contact_emails, search_job_emails, validate_input  # noqa: E402
 
 bp = Blueprint("main", __name__)
 logger: logging.Logger = logging.getLogger(__name__)
+
+# ページ送り機能の1ページ当たり表示件数
+PER_PAGE: int = 10
 
 
 @bp.route("/")
@@ -30,8 +34,14 @@ def list_contact_emails() -> str:
         # 不正な値のクエリパラメータをクリアするためのリダイレクト
         return redirect(url_for("main.list_contact_emails", **cleaned_params))  # type: ignore
 
-    mails = search_contact_emails(form)
-    return render_template("list_contact_emails.html", mails=mails, form=form)
+    # フォームの検索結果
+    query = search_contact_emails(form)
+
+    # ページ送り機能
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    mails, pagination = paginate_query(query=query, page=page, per_page=PER_PAGE)
+
+    return render_template("list_contact_emails.html", mails=mails, form=form, pagination=pagination)
 
 
 @bp.route("/contact-emails/<int:id>", methods=["GET"])
@@ -55,8 +65,14 @@ def list_job_emails() -> str:
         # 不正な値のクエリパラメータをクリアするためのリダイレクト
         return redirect(url_for("main.list_job_emails", **cleaned_params))  # type: ignore
 
-    mails = search_job_emails(form)
-    return render_template("list_job_emails.html", mails=mails, form=form)
+    # フォームの検索結果
+    query = search_job_emails(form)
+
+    # ページ送り機能
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    mails, pagination = paginate_query(query=query, page=page, per_page=PER_PAGE)
+
+    return render_template("list_job_emails.html", mails=mails, form=form, pagination=pagination)
 
 
 @bp.route("/job-emails/<int:id>", methods=["GET"])

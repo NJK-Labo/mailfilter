@@ -129,6 +129,18 @@ wheels = [
 ]
 
 [[package]]
+name = "flask-paginate"
+version = "2024.4.12"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "flask" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5c/d0/aca9153b109f0062eaadb497448f5e596f87cc89474d77347a1d931c8842/flask-paginate-2024.4.12.tar.gz", hash = "sha256:2de04606b061736f0fc8fbe73d9d4d6fc03664638eca70a57728b03b3e2c9577", size = 9727 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/39/a0/8d3948fc5b01d4c65bfadc794cfec6f75aeab375b4245b809607458d60b8/flask_paginate-2024.4.12-py2.py3-none-any.whl", hash = "sha256:2c5a19c851b07456b2bb354d2f5dc9d59fbad0b7241599f3450c86c2427e4da1", size = 7598 },
+]
+
+[[package]]
 name = "flask-sqlalchemy"
 version = "3.1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -193,6 +205,7 @@ dependencies = [
     { name = "cryptography" },
     { name = "flask" },
     { name = "flask-migrate" },
+    { name = "flask-paginate" },
     { name = "flask-sqlalchemy" },
     { name = "flask-wtf" },
     { name = "pymysql" },
@@ -212,6 +225,7 @@ requires-dist = [
     { name = "cryptography", specifier = ">=44.0.0" },
     { name = "flask", specifier = ">=3.1.0" },
     { name = "flask-migrate", specifier = ">=4.0.7" },
+    { name = "flask-paginate", specifier = ">=2024.4.12" },
     { name = "flask-sqlalchemy", specifier = ">=3.1.1" },
     { name = "flask-wtf", specifier = ">=1.2.2" },
     { name = "pymysql", specifier = ">=1.1.1" },

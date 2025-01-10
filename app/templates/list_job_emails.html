@@ -6,42 +6,45 @@
     <script src="{{url_for('static', filename='js/set_date_placeholder.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/reset_form.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/save_job_emails_search_conditions.js')}}" type="module"></script>
-    {% endblock %}
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid mt-5">
-    <!-- タイトル -->
-    <div class="d-flex align-items-center mb-4">
-        <i class="bi bi-people-fill text-primary fs-3 me-2"></i>
-        <h1 class="h3 mb-0">求人関係メール一覧</h1>
-    </div>
-
-    <!-- 検索フォーム -->
     <div class="container">
-        <form id="searchForm" class="row g-3 mb-5 align-items-end" method="GET" action="{{ url_for('main.list_job_emails') }}">
-            <p class="h5 fw-light">検索条件を入力してください</p>
-            <div class="col-md-9">
-                <div class="mb-3">
-                    {{ form.keyword(id="keyword", class="form-control") }}
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        {{ form.start_date(id="start_date", class="form-control") }}
+
+        <!-- タイトル -->
+        <div class="d-flex align-items-center mb-4">
+            <i class="bi bi-people-fill text-primary fs-3 me-2"></i>
+            <h1 class="h3 mb-0">求人関係メール一覧</h1>
+        </div>
+
+        <!-- 検索フォーム -->
+        <div class="container">
+            <form id="searchForm" class="row g-3 mb-5 align-items-end" method="GET" action="{{ url_for('main.list_job_emails') }}">
+                <p class="h5 fw-light">検索条件を入力してください</p>
+                <div class="col-md-9">
+                    <div class="mb-3">
+                        {{ form.keyword(id="keyword", class="form-control") }}
                     </div>
-                    <div class="col-md-6">
-                        {{ form.end_date(id="end_date", class="form-control") }}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form.start_date(id="start_date", class="form-control") }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.end_date(id="end_date", class="form-control") }}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 d-flex flex-column justify-content-end">
-                {{ form.search(id="execute", class="btn btn-success mb-2 w-100") }}
-                <button type="button" id="clear" class="btn btn-warning mb-2 w-100">クリア</button>
-                <button type="button" id="delete" class="btn btn-danger w-100">削除</button>
-            </div>
-        </form>
+                <div class="col-md-3 d-flex flex-column justify-content-end">
+                    {{ form.search(id="execute", class="btn btn-success mb-2 w-100") }}
+                    <button type="button" id="clear" class="btn btn-warning mb-2 w-100">クリア</button>
+                    <button type="button" id="delete" class="btn btn-danger w-100">削除</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- 一覧 -->
+    <!-- メール一覧 -->
     <table class="table table-striped">
         <thead>
             <tr>
@@ -62,5 +65,12 @@
             {% endfor %}
         </tbody>
     </table>
+    <div class="container-fluid mt-5 mb-2">
+        <nav aria-label="Page navigation" class="row align-items-center">
+            <div class="col-4 text-start">{{ pagination.info }}</div>
+            <div class="col-4 text-center">{{ pagination.links }}</div>
+            <div class="col-4 text-end">{{ pagination.page }} / {{ pagination.pages | length }} ページ</div>
+        </nav>        
+    </div>
 </div>
 {% endblock %}

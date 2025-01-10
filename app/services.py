@@ -1,6 +1,8 @@
 from typing import Dict, Tuple
 
+from flask_paginate import Pagination  # type: ignore
 from flask_wtf import FlaskForm  # type: ignore
+from sqlalchemy.orm.query import Query
 
 from app.models import ContactEmail, JobEmail
 
@@ -30,7 +32,7 @@ def validate_input(form: FlaskForm) -> Tuple[bool, Dict[str, str]]:
     return is_valid, cleaned_params
 
 
-def search_contact_emails(form: FlaskForm) -> list[ContactEmail]:
+def search_contact_emails(form: FlaskForm) -> Query:
     """問い合わせメールの検索ロジック"""
     query = ContactEmail.query.order_by(ContactEmail.received_at.desc())  # type: ignore
     if form.start_date.data:
@@ -47,11 +49,11 @@ def search_contact_emails(form: FlaskForm) -> list[ContactEmail]:
     if form.type.data:
         query = query.filter(ContactEmail.contact_type == int(form.type.data))
 
-    return query.all()
+    return query
 
 
-def search_job_emails(form: FlaskForm) -> list[JobEmail]:
-    """問い合わせメールの検索ロジック"""
+def search_job_emails(form: FlaskForm) -> Query:
+    """求人関係メールの検索ロジック"""
     query = JobEmail.query.order_by(JobEmail.received_at.desc())  # type: ignore
     if form.start_date.data:
         query = query.filter(JobEmail.received_at >= form.start_date.data)
@@ -64,4 +66,18 @@ def search_job_emails(form: FlaskForm) -> list[JobEmail]:
             | JobEmail.email.like(f"%{form.keyword.data}%")  # type: ignore
         )
 
-    return query.all()
+    return query
+
+
+def paginate_query(query: Query, page: int, per_page: int) -> tuple[Query, Pagination]:
+    """ページ送りのためのクエリを処理する関数"""
+    mails = query.paginate(page=page, per_page=per_page, error_out=False)  # type: ignore
+    pagination = Pagination(
+        page=page,
+        total=mails.total,
+        record_name="mails",
+        per_page=per_page,
+        display_msg="{start} - {end} / {total} 件",
+        css_framework="bootstrap5",
+    )
+    return mails, pagination
