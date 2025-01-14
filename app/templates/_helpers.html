@@ -1,0 +1,10 @@
+{% macro toggle_received_at_link(endpoint, page_params) %}
+{% set current_order = page_params.pop("order", None) %}
+{% set _ = page_params.pop("page", None) %}
+
+{% if current_order == "asc" %}
+        <a href="{{ url_for(endpoint, order='desc', page=1, **page_params) }}">受信日時▲</a>
+    {% else %}
+        <a href="{{ url_for(endpoint, order='asc', page=1, **page_params) }}">受信日時▼</a>
+    {% endif %}
+{% endmacro %}

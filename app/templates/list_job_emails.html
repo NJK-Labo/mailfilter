@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% from "_helpers.html" import toggle_received_at_link %}
+
 {% block title %}MailFilter-求人関係メール一覧{% endblock %}
 
 {% block script %}
@@ -49,7 +51,7 @@
         <thead>
             <tr>
                 <th></th>
-                <th>受信日時</th>
+                <th>{{ toggle_received_at_link("main.list_job_emails", request.args.to_dict()) }}</th>
                 <th>内容</th>
                 <th>送信元メールアドレス</th>
             </tr>
