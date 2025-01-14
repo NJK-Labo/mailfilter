@@ -4,10 +4,16 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_paginate import get_page_parameter  # type: ignore
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
-from app import db  # noqa: E402
-from app.forms import ContactEmailSearchForm, JobEmailSearchForm  # noqa: E402
+from app import db
+from app.forms import ContactEmailSearchForm, JobEmailSearchForm
 from app.models import ContactEmail, JobEmail
-from app.services import paginate_query, search_contact_emails, search_job_emails, validate_input  # noqa: E402
+from app.services import (
+    paginate_query,
+    search_contact_emails,
+    search_job_emails,
+    sort_emails_by_received_at,
+    validate_input,
+)
 
 bp = Blueprint("main", __name__)
 logger: logging.Logger = logging.getLogger(__name__)
@@ -35,7 +41,11 @@ def list_contact_emails() -> str:
         return redirect(url_for("main.list_contact_emails", **cleaned_params))  # type: ignore
 
     # フォームの検索結果
-    query = search_contact_emails(form)
+    query = search_contact_emails(form=form)
+
+    # 並べ替え機能
+    order = request.args.get("order", "desc")
+    query = sort_emails_by_received_at(query=query, model=ContactEmail, order=order)
 
     # ページ送り機能
     page = request.args.get(get_page_parameter(), type=int, default=1)
@@ -66,7 +76,11 @@ def list_job_emails() -> str:
         return redirect(url_for("main.list_job_emails", **cleaned_params))  # type: ignore
 
     # フォームの検索結果
-    query = search_job_emails(form)
+    query = search_job_emails(form=form)
+
+    # 並べ替え機能
+    order = request.args.get("order", "desc")
+    query = sort_emails_by_received_at(query=query, model=JobEmail, order=order)
 
     # ページ送り機能
     page = request.args.get(get_page_parameter(), type=int, default=1)
