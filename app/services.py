@@ -33,9 +33,8 @@ def validate_input(form: FlaskForm) -> Tuple[bool, Dict[str, str]]:
     return is_valid, cleaned_params
 
 
-def search_contact_emails(form: FlaskForm) -> Query:
+def search_contact_emails(query: Query, form: FlaskForm) -> Query:
     """問い合わせメールの検索ロジック"""
-    query = ContactEmail.query
     if form.start_date.data:
         query = query.filter(ContactEmail.received_at >= form.start_date.data)
     if form.end_date.data:
@@ -48,14 +47,13 @@ def search_contact_emails(form: FlaskForm) -> Query:
             | ContactEmail.email.like(f"%{form.keyword.data}%")  # type: ignore
         )
     if form.type.data:
-        query = query.filter(ContactEmail.contact_type == int(form.type.data))
+        query = query.filter(ContactEmail.contact_type == int(form.type.data))  # type: ignore
 
     return query
 
 
-def search_job_emails(form: FlaskForm) -> Query:
+def search_job_emails(query: Query, form: FlaskForm) -> Query:
     """求人関係メールの検索ロジック"""
-    query = JobEmail.query
     if form.start_date.data:
         query = query.filter(JobEmail.received_at >= form.start_date.data)
     if form.end_date.data:
