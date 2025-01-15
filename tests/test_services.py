@@ -1,5 +1,12 @@
 from app.forms import ContactEmailSearchForm, JobEmailSearchForm
-from app.services import _replace_none_with_empty_string, search_contact_emails, search_job_emails, validate_input
+from app.models import ContactEmail, JobEmail
+from app.services import (
+    _replace_none_with_empty_string,
+    search_contact_emails,
+    search_job_emails,
+    sort_emails_by_received_at,
+    validate_input,
+)
 from tests.mock import MockSearchForm
 
 
@@ -42,7 +49,9 @@ def test_search_contact_emails_no_filters(client, init_contact_emails_for_search
     form.keyword.data = ""
     form.type.data = ""
 
-    results = search_contact_emails(form)
+    query = ContactEmail.query
+    query = search_contact_emails(query, form)
+    results = query.all()
     assert len(results) == 2
 
 
@@ -54,7 +63,9 @@ def test_search_contact_emails_with_start_date(client, init_contact_emails_for_s
     form.keyword.data = ""
     form.type.data = ""
 
-    results = search_contact_emails(form)
+    query = ContactEmail.query
+    query = search_contact_emails(query, form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 2"
 
@@ -67,7 +78,9 @@ def test_search_contact_emails_with_end_date(client, init_contact_emails_for_sea
     form.keyword.data = ""
     form.type.data = ""
 
-    results = search_contact_emails(form)
+    query = ContactEmail.query
+    query = search_contact_emails(query, form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
 
@@ -80,7 +93,9 @@ def test_search_contact_emails_with_keyword(client, init_contact_emails_for_sear
     form.keyword.data = "content 2"
     form.type.data = ""
 
-    results = search_contact_emails(form)
+    query = ContactEmail.query
+    query = search_contact_emails(query, form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 2"
 
@@ -93,7 +108,9 @@ def test_search_contact_emails_with_type(client, init_contact_emails_for_search)
     form.keyword.data = ""
     form.type.data = 1
 
-    results = search_contact_emails(form)
+    query = ContactEmail.query
+    query = search_contact_emails(query, form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
 
@@ -106,7 +123,9 @@ def test_search_contact_emails_with_all_filters(client, init_contact_emails_for_
     form.keyword.data = "Test content 1"
     form.type.data = 1
 
-    results = search_contact_emails(form)
+    query = ContactEmail.query
+    query = search_contact_emails(query, form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
 
@@ -119,7 +138,9 @@ def test_search_job_emails_no_filters(client, init_job_emails_for_search):
     form.end_date.data = ""
     form.keyword.data = ""
 
-    results = search_job_emails(form)
+    query = JobEmail.query
+    query = search_job_emails(query, form)
+    results = query.all()
     assert len(results) == 2
 
 
@@ -130,7 +151,9 @@ def test_search_job_emails_with_start_date(client, init_job_emails_for_search):
     form.end_date.data = ""
     form.keyword.data = ""
 
-    results = search_job_emails(form)
+    query = JobEmail.query
+    query = search_job_emails(query, form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 2"
 
@@ -142,7 +165,9 @@ def test_search_job_emails_with_end_date(client, init_job_emails_for_search):
     form.end_date.data = "2025-01-31"
     form.keyword.data = ""
 
-    results = search_job_emails(form)
+    query = JobEmail.query
+    query = search_job_emails(query, form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
 
@@ -154,7 +179,9 @@ def test_search_job_emails_with_keyword(client, init_job_emails_for_search):
     form.end_date.data = ""
     form.keyword.data = "content 2"
 
-    results = search_job_emails(form)
+    query = JobEmail.query
+    query = search_job_emails(query, form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 2"
 
@@ -166,6 +193,26 @@ def test_search_job_emails_with_all_filters(client, init_job_emails_for_search):
     form.end_date.data = "2025-02-01"
     form.keyword.data = "Test content 1"
 
-    results = search_job_emails(form)
+    query = JobEmail.query
+    query = search_job_emails(query, form)
+    results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
+
+
+def test_sort_emails_by_received_at_asc(init_sort_emails):
+    """受信日時の昇順ソートのテスト"""
+    query = ContactEmail.query
+    sorted_query = sort_emails_by_received_at(query, ContactEmail, "asc")
+    sorted_emails = sorted_query.all()
+    received_at_list = [email.received_at for email in sorted_emails]
+    assert received_at_list == sorted(received_at_list)
+
+
+def test_sort_emails_by_received_at_desc(init_sort_emails):
+    """受信日時の降順ソートのテスト"""
+    query = ContactEmail.query
+    sorted_query = sort_emails_by_received_at(query, ContactEmail, "desc")
+    sorted_emails = sorted_query.all()
+    received_at_list = [email.received_at for email in sorted_emails]
+    assert received_at_list == sorted(received_at_list, reverse=True)

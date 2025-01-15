@@ -1,8 +1,9 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Type
 
 from flask_paginate import Pagination  # type: ignore
 from flask_wtf import FlaskForm  # type: ignore
-from sqlalchemy.orm.query import Query
+from sqlalchemy.ext.declarative import DeclarativeMeta
+from sqlalchemy.orm import Query
 
 from app.models import ContactEmail, JobEmail
 
@@ -32,9 +33,8 @@ def validate_input(form: FlaskForm) -> Tuple[bool, Dict[str, str]]:
     return is_valid, cleaned_params
 
 
-def search_contact_emails(form: FlaskForm) -> Query:
+def search_contact_emails(query: Query, form: FlaskForm) -> Query:
     """問い合わせメールの検索ロジック"""
-    query = ContactEmail.query.order_by(ContactEmail.received_at.desc())  # type: ignore
     if form.start_date.data:
         query = query.filter(ContactEmail.received_at >= form.start_date.data)
     if form.end_date.data:
@@ -47,14 +47,13 @@ def search_contact_emails(form: FlaskForm) -> Query:
             | ContactEmail.email.like(f"%{form.keyword.data}%")  # type: ignore
         )
     if form.type.data:
-        query = query.filter(ContactEmail.contact_type == int(form.type.data))
+        query = query.filter(ContactEmail.contact_type == int(form.type.data))  # type: ignore
 
     return query
 
 
-def search_job_emails(form: FlaskForm) -> Query:
+def search_job_emails(query: Query, form: FlaskForm) -> Query:
     """求人関係メールの検索ロジック"""
-    query = JobEmail.query.order_by(JobEmail.received_at.desc())  # type: ignore
     if form.start_date.data:
         query = query.filter(JobEmail.received_at >= form.start_date.data)
     if form.end_date.data:
@@ -81,3 +80,12 @@ def paginate_query(query: Query, page: int, per_page: int) -> tuple[Query, Pagin
         css_framework="bootstrap5",
     )
     return mails, pagination
+
+
+def sort_emails_by_received_at(query: Query, model: Type[DeclarativeMeta], order: str) -> Query:
+    """メールのクエリ結果を受信日時で並び替える汎用関数"""
+    if order == "asc":
+        query = query.order_by(model.received_at.asc())  # type: ignore
+    else:
+        query = query.order_by(model.received_at.desc())  # type: ignore
+    return query
