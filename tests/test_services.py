@@ -1,6 +1,12 @@
 from app.forms import ContactEmailSearchForm, JobEmailSearchForm
 from app.models import ContactEmail, JobEmail
-from app.services import _replace_none_with_empty_string, search_contact_emails, search_job_emails, validate_input
+from app.services import (
+    _replace_none_with_empty_string,
+    search_contact_emails,
+    search_job_emails,
+    sort_emails_by_received_at,
+    validate_input,
+)
 from tests.mock import MockSearchForm
 
 
@@ -192,3 +198,21 @@ def test_search_job_emails_with_all_filters(client, init_job_emails_for_search):
     results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
+
+
+def test_sort_emails_by_received_at_asc(init_sort_emails):
+    """受信日時の昇順ソートのテスト"""
+    query = ContactEmail.query
+    sorted_query = sort_emails_by_received_at(query, ContactEmail, "asc")
+    sorted_emails = sorted_query.all()
+    received_at_list = [email.received_at for email in sorted_emails]
+    assert received_at_list == sorted(received_at_list)
+
+
+def test_sort_emails_by_received_at_desc(init_sort_emails):
+    """受信日時の降順ソートのテスト"""
+    query = ContactEmail.query
+    sorted_query = sort_emails_by_received_at(query, ContactEmail, "desc")
+    sorted_emails = sorted_query.all()
+    received_at_list = [email.received_at for email in sorted_emails]
+    assert received_at_list == sorted(received_at_list, reverse=True)

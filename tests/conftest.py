@@ -3,7 +3,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -127,6 +127,46 @@ def init_job_emails_for_search(db_session):
                 email="test2@example.com",
                 content="Test content 2",
                 received_at=datetime(2025, 2, 9, 12, 0, 2),
+            ),
+        ]
+    )
+    db_session.commit()
+
+
+@pytest.fixture
+def init_sort_emails(db_session):
+    now = datetime.now()
+    db_session.add_all(
+        [
+            ContactEmail(
+                content="a",
+                name="あ",
+                kana="ア",
+                email="test1@example.com",
+                contact_type=1,
+                received_at=now - timedelta(days=3),
+                gender=1,
+                ip="172.16.1.1",
+            ),
+            ContactEmail(
+                content="b",
+                name="い",
+                kana="イ",
+                email="test2@example.com",
+                contact_type=2,
+                received_at=now - timedelta(days=2),
+                gender=2,
+                ip="172.16.1.2",
+            ),
+            ContactEmail(
+                content="c",
+                name="う",
+                kana="ウ",
+                email="test3@example.com",
+                contact_type=3,
+                received_at=now - timedelta(days=1),
+                gender=1,
+                ip="172.16.1.3",
             ),
         ]
     )
