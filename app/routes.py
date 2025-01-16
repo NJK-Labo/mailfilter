@@ -1,6 +1,7 @@
 import logging
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask.typing import ResponseReturnValue
 from flask_paginate import get_page_parameter  # type: ignore
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
@@ -57,6 +58,18 @@ def show_contact_email(id: int) -> str | tuple[str, int]:
     return render_template("show_contact_email.html", mail=mail)
 
 
+@bp.route("/contact_emails/<int:id>", methods=["POST"])
+def delete_contact_email(id: int) -> ResponseReturnValue:
+    """問い合わせメール削除"""
+    if request.form.get("_method") == "DELETE":  # POSTかつ_method=DELETEのみ処理対象
+        contact_email: ContactEmail = ContactEmail.query.get_or_404(id)
+        db.session.delete(contact_email)
+        db.session.commit()
+        flash("問い合わせメールが削除されました", "success")
+
+    return redirect(url_for("main.list_contact_emails"))
+
+
 @bp.route("/job-emails")
 def list_job_emails() -> str:
     """求人関係メール一覧画面"""
@@ -91,6 +104,18 @@ def show_job_email(id: int) -> str | tuple[str, int]:
     if not mail:
         return render_template("errors/404.html"), 404
     return render_template("show_job_email.html", mail=mail)
+
+
+@bp.route("/job_emails/<int:id>", methods=["POST"])
+def delete_job_email(id: int) -> ResponseReturnValue:
+    """求人関係メール削除"""
+    if request.form.get("_method") == "DELETE":  # POSTかつ_method=DELETEのみ処理対象
+        job_email: JobEmail = JobEmail.query.get_or_404(id)
+        db.session.delete(job_email)
+        db.session.commit()
+        flash("求人関係メールが削除されました", "success")
+
+    return redirect(url_for("main.list_job_emails"))
 
 
 @bp.app_errorhandler(NotFound)

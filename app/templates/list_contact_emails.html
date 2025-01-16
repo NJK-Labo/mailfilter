@@ -9,6 +9,7 @@
     <script src="{{url_for('static', filename='js/set_selectbox_color.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/reset_form.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/save_contact_emails_search_conditions.js')}}" type="module"></script>
+    <script src="{{url_for('static', filename='js/set_delete_button.js')}}" type="module"></script>
 {% endblock %}
 
 {% block content %}
@@ -66,7 +67,12 @@
                     <a href="{{ url_for('main.show_contact_email', id=mail.id) }}" class="btn btn-outline-primary btn-sm p-1">詳細</a>
                 </td>
                 <td class="px-1 max-width-35">
-                    <a href="#" class="btn btn-outline-danger btn-sm p-1">削除</a>
+                    <!-- 削除ボタン -->
+                    <form id="delete-form-{{ mail.id }}" action="{{ url_for('main.delete_contact_email', id=mail.id) }}" method="POST" style="display: none;">
+                        {{ form.hidden_tag() }}
+                        <input type="hidden" name="_method" value="DELETE">
+                    </form>
+                    <button id="delete-button-{{ mail.id }}" class="btn btn-outline-danger btn-sm p-1">削除</button>
                 </td>
                 <td class="ps-4">{{mail.received_at}}</td>
                 <td>{{mail.contact_type | contact_type}}</td>
@@ -84,4 +90,5 @@
         </nav>        
     </div>
 </div>
+{% include '_mail_delete_modal.html' %}
 {% endblock %}
