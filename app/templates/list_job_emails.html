@@ -50,7 +50,8 @@
         <thead>
             <tr>
                 <th></th>
-                <th>{{ toggle_received_at_link("main.list_job_emails", request.args.to_dict()) }}</th>
+                <th></th>
+                <th class="ps-4">{{ toggle_received_at_link("main.list_job_emails", request.args.to_dict()) }}</th>
                 <th>内容</th>
                 <th>送信元メールアドレス</th>
             </tr>
@@ -58,8 +59,13 @@
         <tbody>
             {% for mail in mails %}
             <tr>
-                <td><a href="{{ url_for('main.show_job_email', id=mail.id) }}" class="text-decoration-none">詳細</a></td>
-                <td>{{mail.received_at}}</td>
+                <td  class="px-1 max-width-40">
+                    <a href="{{ url_for('main.show_job_email', id=mail.id) }}" class="btn btn-outline-primary btn-sm p-1">詳細</a>
+                </td>
+                <td class="px-1 max-width-40">
+                    <a href="#" class="btn btn-outline-danger btn-sm p-1">削除</a>
+                </td>
+                <td class="ps-4">{{mail.received_at}}</td>
                 <td>{{mail.content| truncate(50, end='...')}}</td>
                 <td>{{mail.email}}</td>
             </tr>

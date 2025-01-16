@@ -52,7 +52,8 @@
         <thead>
             <tr>
                 <th></th>
-                <th>{{ toggle_received_at_link("main.list_contact_emails", request.args.to_dict()) }}</th>
+                <th></th>
+                <th class="ps-4">{{ toggle_received_at_link("main.list_contact_emails", request.args.to_dict()) }}</th>
                 <th>問い合わせ種別</th>
                 <th>問い合わせ内容</th>
                 <th>送信元メールアドレス</th>
@@ -61,8 +62,13 @@
         <tbody>
             {% for mail in mails %}
             <tr>
-                <td><a href="{{ url_for('main.show_contact_email', id=mail.id) }}" class="text-decoration-none">詳細</a></td>
-                <td>{{mail.received_at}}</td>
+                <td class="px-1 max-width-35">
+                    <a href="{{ url_for('main.show_contact_email', id=mail.id) }}" class="btn btn-outline-primary btn-sm p-1">詳細</a>
+                </td>
+                <td class="px-1 max-width-35">
+                    <a href="#" class="btn btn-outline-danger btn-sm p-1">削除</a>
+                </td>
+                <td class="ps-4">{{mail.received_at}}</td>
                 <td>{{mail.contact_type | contact_type}}</td>
                 <td>{{mail.content | truncate(30, end='...')}}</td>
                 <td>{{mail.email}}</td>
