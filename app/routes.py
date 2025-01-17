@@ -22,7 +22,7 @@ def index() -> str:
     return render_template("index.html")
 
 
-@bp.route("/contact-emails", methods=["GET"])
+@bp.route("/contact-emails", methods=["GET", "DELETE"])
 def list_contact_emails() -> str:
     """問い合わせメール一覧画面"""
     form = ContactEmailSearchForm(request.args)
@@ -67,10 +67,14 @@ def delete_contact_email(id: int) -> ResponseReturnValue:
         db.session.commit()
         flash("問い合わせメールが削除されました", "success")
 
+        # 検索条件を削除前の状態に設定する
+        search_params = request.form.to_dict()
+        return redirect(url_for("main.list_contact_emails", **search_params))  # type: ignore
+
     return redirect(url_for("main.list_contact_emails"))
 
 
-@bp.route("/job-emails")
+@bp.route("/job-emails", methods=["GET", "DELETE"])
 def list_job_emails() -> str:
     """求人関係メール一覧画面"""
     form = JobEmailSearchForm(request.args)
@@ -114,6 +118,10 @@ def delete_job_email(id: int) -> ResponseReturnValue:
         db.session.delete(job_email)
         db.session.commit()
         flash("求人関係メールが削除されました", "success")
+
+        # 検索条件を削除前の状態に設定する
+        search_params = request.form.to_dict()
+        return redirect(url_for("main.list_job_emails", **search_params))  # type: ignore
 
     return redirect(url_for("main.list_job_emails"))
 
