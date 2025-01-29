@@ -8,6 +8,7 @@
     <script src="{{url_for('static', filename='js/set_date_placeholder.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/reset_form.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/save_job_emails_search_conditions.js')}}" type="module"></script>
+    <script src="{{url_for('static', filename='js/set_delete_button.js')}}" type="module"></script>
 {% endblock %}
 
 {% block content %}
@@ -37,10 +38,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 d-flex flex-column justify-content-end">
+                <div class="col-md-3 d-flex flex-column justify-content-end mb-3">
                     {{ form.search(id="execute", class="btn btn-success mb-2 w-100") }}
-                    <button type="button" id="clear" class="btn btn-warning mb-2 w-100">クリア</button>
-                    <button type="button" id="delete" class="btn btn-danger w-100">削除</button>
+                    <button type="button" id="clear" class="btn btn-warning w-100">クリア</button>
                 </div>
             </form>
         </div>
@@ -51,7 +51,8 @@
         <thead>
             <tr>
                 <th></th>
-                <th>{{ toggle_received_at_link("main.list_job_emails", request.args.to_dict()) }}</th>
+                <th></th>
+                <th class="ps-4">{{ toggle_received_at_link("main.list_job_emails", request.args.to_dict()) }}</th>
                 <th>内容</th>
                 <th>送信元メールアドレス</th>
             </tr>
@@ -59,8 +60,22 @@
         <tbody>
             {% for mail in mails %}
             <tr>
-                <td><a href="{{ url_for('main.show_job_email', id=mail.id) }}" class="text-decoration-none">詳細</a></td>
-                <td>{{mail.received_at}}</td>
+                <td  class="px-1 max-width-40">
+                    <a href="{{ url_for('main.show_job_email', id=mail.id) }}" class="btn btn-outline-primary btn-sm p-1">詳細</a>
+                </td>
+                <td class="px-1 max-width-40">
+                    <!-- 削除ボタン -->
+                    <form id="delete-form-{{ mail.id }}" action="{{ url_for('main.delete_job_email', id=mail.id) }}" method="POST" style="display: none;">
+                        {{ form.hidden_tag() }}
+                        <input type="hidden" name="_method" value="DELETE">
+                        <!-- クエリパラメータをhiddenフォームとして追加 -->
+                        {% for key, value in request.args.items() %}
+                            <input type="hidden" name="{{ key }}" value="{{ value }}">
+                        {% endfor %}
+                    </form>
+                    <button id="delete-button-{{ mail.id }}" class="btn btn-outline-danger btn-sm p-1">削除</button>
+                </td>
+                <td class="ps-4">{{mail.received_at}}</td>
                 <td>{{mail.content| truncate(50, end='...')}}</td>
                 <td>{{mail.email}}</td>
             </tr>
@@ -75,4 +90,5 @@
         </nav>        
     </div>
 </div>
+{% include '_mail_delete_modal.html' %}
 {% endblock %}

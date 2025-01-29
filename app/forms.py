@@ -1,5 +1,4 @@
 from flask_wtf import FlaskForm  # type: ignore
-from wtforms import Form  # type: ignore
 from wtforms.fields import DateField, SearchField, SelectField, SubmitField  # type: ignore
 from wtforms.validators import Length, Optional, ValidationError  # type: ignore
 
@@ -40,7 +39,7 @@ class ContactEmailSearchForm(FlaskForm):
     search = SubmitField("検索")
 
 
-class JobEmailSearchForm(Form):
+class JobEmailSearchForm(FlaskForm):
     """求人関係メール一覧の検索フォームクラス"""
 
     class Meta:

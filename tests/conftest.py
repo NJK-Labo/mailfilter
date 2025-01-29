@@ -14,6 +14,7 @@ from app.models import ContactEmail, JobEmail, db
 @pytest.fixture
 def app():
     app = create_app("testing")
+    app.config["SERVER_NAME"] = "testserver"
     with app.app_context():
         yield app
 

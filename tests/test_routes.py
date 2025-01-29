@@ -1,3 +1,6 @@
+from urllib.parse import urlparse
+
+from flask import url_for
 from werkzeug.exceptions import InternalServerError
 
 
@@ -45,6 +48,18 @@ def test_show_contact_email_not_found(client, init_contact_emails):
     assert "お探しのページは見つかりませんでした".encode("utf-8") in response.data
 
 
+def test_delete_contact_email(client, init_contact_emails):
+    """問い合わせメール削除のテスト"""
+    response = client.post("/contact_emails/1", data={"_method": "DELETE"})
+    assert response.status_code == 302
+    url = url_for("main.list_contact_emails", _external=True)
+    assert response.headers["Location"] == urlparse(url).path
+
+    # リダイレクト先のページを取得
+    redirect_response = client.get(response.headers["Location"], follow_redirects=True)
+    assert "問い合わせメールが削除されました" in redirect_response.data.decode("utf-8")
+
+
 def test_show_job_email(client, init_job_emails):
     """求人関係メール詳細画面のテスト"""
     response = client.get("/job-emails/1")
@@ -58,6 +73,18 @@ def test_show_job_email_not_found(client, init_job_emails):
     response = client.get("/job-emails/999999")
     assert response.status_code == 404
     assert "お探しのページは見つかりませんでした".encode("utf-8") in response.data
+
+
+def test_delete_job_email(client, init_job_emails):
+    """求人関係メール削除のテスト"""
+    response = client.post("/job_emails/1", data={"_method": "DELETE"})
+    assert response.status_code == 302
+    url = url_for("main.list_job_emails", _external=True)
+    assert response.headers["Location"] == urlparse(url).path
+
+    # リダイレクト先のページを取得
+    redirect_response = client.get(response.headers["Location"], follow_redirects=True)
+    assert "求人関係メールが削除されました" in redirect_response.data.decode("utf-8")
 
 
 def test_404_error(client):

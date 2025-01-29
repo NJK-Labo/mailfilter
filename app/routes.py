@@ -1,6 +1,7 @@
 import logging
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask.typing import ResponseReturnValue
 from flask_paginate import get_page_parameter  # type: ignore
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
@@ -16,13 +17,13 @@ PER_PAGE: int = 10
 
 
 @bp.route("/")
-def index() -> str:
+def index() -> ResponseReturnValue:
     """トップ画面"""
     return render_template("index.html")
 
 
-@bp.route("/contact-emails", methods=["GET"])
-def list_contact_emails() -> str:
+@bp.route("/contact-emails", methods=["GET", "DELETE"])
+def list_contact_emails() -> ResponseReturnValue:
     """問い合わせメール一覧画面"""
     form = ContactEmailSearchForm(request.args)
 
@@ -49,16 +50,31 @@ def list_contact_emails() -> str:
 
 
 @bp.route("/contact-emails/<int:id>", methods=["GET"])
-def show_contact_email(id: int) -> str | tuple[str, int]:
+def show_contact_email(id: int) -> ResponseReturnValue:
     """問い合わせメール詳細画面"""
     mail = db.session.get(ContactEmail, id)
     if not mail:
-        return render_template("errors/404.html"), 404
+        abort(404)
     return render_template("show_contact_email.html", mail=mail)
 
 
-@bp.route("/job-emails")
-def list_job_emails() -> str:
+@bp.route("/contact_emails/<int:id>", methods=["POST"])
+def delete_contact_email(id: int) -> ResponseReturnValue:
+    """問い合わせメール削除"""
+    mail = db.session.get(ContactEmail, id)
+    if not mail:
+        abort(404)
+    db.session.delete(mail)
+    db.session.commit()
+    flash("問い合わせメールが削除されました", "success")
+
+    # 検索条件を削除前の状態に設定する
+    search_params = request.form.to_dict()
+    return redirect(url_for("main.list_contact_emails", **search_params))  # type: ignore
+
+
+@bp.route("/job-emails", methods=["GET", "DELETE"])
+def list_job_emails() -> ResponseReturnValue:
     """求人関係メール一覧画面"""
     form = JobEmailSearchForm(request.args)
 
@@ -85,16 +101,31 @@ def list_job_emails() -> str:
 
 
 @bp.route("/job-emails/<int:id>", methods=["GET"])
-def show_job_email(id: int) -> str | tuple[str, int]:
+def show_job_email(id: int) -> ResponseReturnValue:
     """求人関係メール詳細画面"""
     mail = db.session.get(JobEmail, id)
     if not mail:
-        return render_template("errors/404.html"), 404
+        abort(404)
     return render_template("show_job_email.html", mail=mail)
 
 
+@bp.route("/job_emails/<int:id>", methods=["POST"])
+def delete_job_email(id: int) -> ResponseReturnValue:
+    """求人関係メール削除"""
+    mail = db.session.get(JobEmail, id)
+    if not mail:
+        abort(404)
+    db.session.delete(mail)
+    db.session.commit()
+    flash("求人関係メールが削除されました", "success")
+
+    # 検索条件を削除前の状態に設定する
+    search_params = request.form.to_dict()
+    return redirect(url_for("main.list_job_emails", **search_params))  # type: ignore
+
+
 @bp.app_errorhandler(NotFound)
-def show_404_page(error: HTTPException) -> tuple[str, int]:
+def show_404_page(error: HTTPException) -> ResponseReturnValue:
     """404 NotFoundエラー画面"""
     msg: str | None = error.description
     logger.error("404エラー: %s", msg)
@@ -102,7 +133,7 @@ def show_404_page(error: HTTPException) -> tuple[str, int]:
 
 
 @bp.app_errorhandler(InternalServerError)
-def show_500_page(error: HTTPException) -> tuple[str, int]:
+def show_500_page(error: HTTPException) -> ResponseReturnValue:
     """500 内部サーバーエラー画面"""
     msg: str | None = error.description
     logger.error("500エラー: %s", msg, exc_info=True)
