@@ -22,7 +22,7 @@ class ContactEmail(db.Model):  # type: ignore
     ip: str = db.Column(db.String(200), nullable=False)
     received_at: datetime = db.Column(db.DateTime, nullable=False, index=True, default=Config.now_jst)
     created_at: datetime = db.Column(db.DateTime, nullable=False, default=Config.now_jst)
-    updated_at: datetime = db.Column(db.DateTime, nullable=False, default=Config.now_jst, onupdate=Config.now_jst)
+    updated_at: datetime = db.Column(db.DateTime, nullable=True, default=Config.now_jst, onupdate=Config.now_jst)
 
 
 class JobEmail(db.Model):  # type: ignore
@@ -36,4 +36,4 @@ class JobEmail(db.Model):  # type: ignore
     content: str = db.Column(db.Text, nullable=False)
     received_at: datetime = db.Column(db.DateTime, nullable=False, index=True, default=Config.now_jst)
     created_at: datetime = db.Column(db.DateTime, nullable=False, default=Config.now_jst)
-    updated_at: datetime = db.Column(db.DateTime, nullable=False, default=Config.now_jst, onupdate=Config.now_jst)
+    updated_at: datetime = db.Column(db.DateTime, nullable=True, default=Config.now_jst, onupdate=Config.now_jst)
