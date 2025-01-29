@@ -21,3 +21,6 @@ build/
 
 # 環境変数として管理するSECRET値
 .env
+
+# Powerautomate連携用
+csvfolder
