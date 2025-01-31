@@ -63,10 +63,10 @@
         <tbody>
             {% for mail in mails %}
             <tr>
-                <td class="px-1 max-width-35">
+                <td class="px-1 max-width-40">
                     <a href="{{ url_for('main.show_contact_email', id=mail.id) }}" class="btn btn-outline-primary btn-sm p-1">詳細</a>
                 </td>
-                <td class="px-1 max-width-35">
+                <td class="px-1 max-width-40">
                     <!-- 削除ボタン -->
                     <form id="delete-form-{{ mail.id }}" action="{{ url_for('main.delete_contact_email', id=mail.id) }}" method="POST" style="display: none;">
                         {{ form.hidden_tag() }}
