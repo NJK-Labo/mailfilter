@@ -80,7 +80,7 @@
                 </td>
                 <td class="ps-4">{{mail.received_at}}</td>
                 <td>{{mail.contact_type | contact_type}}</td>
-                <td>{{mail.content | truncate(30, end='...')}}</td>
+                <td>{{mail.content | truncate(30, true, end='...')}}</td>
                 <td>{{mail.email}}</td>
             </tr>
             {% endfor %}
