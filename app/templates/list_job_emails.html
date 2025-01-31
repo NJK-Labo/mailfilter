@@ -76,7 +76,7 @@
                     <button id="delete-button-{{ mail.id }}" class="btn btn-outline-danger btn-sm p-1">削除</button>
                 </td>
                 <td class="ps-4">{{mail.received_at}}</td>
-                <td>{{mail.content| truncate(50, true, end='...')}}</td>
+                <td>{{mail.content| truncate(50, True, end='...')}}</td>
                 <td>{{mail.email}}</td>
             </tr>
             {% endfor %}
