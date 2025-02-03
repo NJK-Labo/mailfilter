@@ -1,10 +1,14 @@
+from datetime import date, datetime
+
 from app.forms import ContactEmailSearchForm, JobEmailSearchForm
 from app.models import ContactEmail, JobEmail
 from app.services import (
     _replace_none_with_empty_string,
+    end_of_day,
     search_contact_emails,
     search_job_emails,
     sort_emails_by_received_at,
+    start_of_day,
     validate_input,
 )
 from tests.mock import MockSearchForm
@@ -58,7 +62,7 @@ def test_search_contact_emails_no_filters(client, init_contact_emails_for_search
 def test_search_contact_emails_with_start_date(client, init_contact_emails_for_search):
     """開始日付のみ指定した場合は、その日付以降のメールを返す"""
     form = ContactEmailSearchForm()
-    form.start_date.data = "2025-02-01"
+    form.start_date.data = datetime(2025, 2, 1)
     form.end_date.data = ""
     form.keyword.data = ""
     form.type.data = ""
@@ -74,7 +78,7 @@ def test_search_contact_emails_with_end_date(client, init_contact_emails_for_sea
     """終了日付のみ指定した場合は、その日付以前のメールを返す"""
     form = ContactEmailSearchForm()
     form.start_date.data = ""
-    form.end_date.data = "2025-01-31"
+    form.end_date.data = datetime(2025, 1, 31)
     form.keyword.data = ""
     form.type.data = ""
 
@@ -118,8 +122,8 @@ def test_search_contact_emails_with_type(client, init_contact_emails_for_search)
 def test_search_contact_emails_with_all_filters(client, init_contact_emails_for_search):
     """全ての条件を指定した場合は、全ての条件に合致するメールを返す"""
     form = ContactEmailSearchForm()
-    form.start_date.data = "2025-01-01"
-    form.end_date.data = "2025-02-01"
+    form.start_date.data = datetime(2025, 1, 1)
+    form.end_date.data = datetime(2025, 2, 1)
     form.keyword.data = "Test content 1"
     form.type.data = 1
 
@@ -147,7 +151,7 @@ def test_search_job_emails_no_filters(client, init_job_emails_for_search):
 def test_search_job_emails_with_start_date(client, init_job_emails_for_search):
     """開始日付のみ指定した場合は、その日付以降のメールを返す"""
     form = JobEmailSearchForm()
-    form.start_date.data = "2025-02-01"
+    form.start_date.data = datetime(2025, 2, 1)
     form.end_date.data = ""
     form.keyword.data = ""
 
@@ -162,7 +166,7 @@ def test_search_job_emails_with_end_date(client, init_job_emails_for_search):
     """終了日付のみ指定した場合は、その日付以前のメールを返す"""
     form = JobEmailSearchForm()
     form.start_date.data = ""
-    form.end_date.data = "2025-01-31"
+    form.end_date.data = datetime(2025, 1, 31)
     form.keyword.data = ""
 
     query = JobEmail.query
@@ -189,8 +193,8 @@ def test_search_job_emails_with_keyword(client, init_job_emails_for_search):
 def test_search_job_emails_with_all_filters(client, init_job_emails_for_search):
     """全ての条件を指定した場合は、全ての条件に合致するメールを返す"""
     form = JobEmailSearchForm()
-    form.start_date.data = "2025-01-01"
-    form.end_date.data = "2025-02-01"
+    form.start_date.data = datetime(2025, 1, 1)
+    form.end_date.data = datetime(2025, 2, 1)
     form.keyword.data = "Test content 1"
 
     query = JobEmail.query
@@ -198,6 +202,20 @@ def test_search_job_emails_with_all_filters(client, init_job_emails_for_search):
     results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
+
+
+def test_start_of_day():
+    """開始日の00:00:00を返すテスト"""
+    test_date = date(2025, 2, 3)
+    expected = datetime(2025, 2, 3, 0, 0, 0)
+    assert start_of_day(test_date) == expected
+
+
+def test_end_of_day():
+    """終了日の23:59:59を返すテスト"""
+    test_date = date(2025, 2, 3)
+    expected = datetime(2025, 2, 3, 23, 59, 59, 999999)
+    assert end_of_day(test_date) == expected
 
 
 def test_sort_emails_by_received_at_asc(init_sort_emails):
