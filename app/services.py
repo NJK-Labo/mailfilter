@@ -1,4 +1,5 @@
-from typing import Dict, Tuple, Type
+from datetime import datetime
+from typing import Type
 
 from flask_paginate import Pagination  # type: ignore
 from flask_wtf import FlaskForm  # type: ignore
@@ -8,7 +9,7 @@ from sqlalchemy.orm import Query
 from app.models import ContactEmail, JobEmail
 
 
-def _replace_none_with_empty_string(params: Dict[str, str]) -> Dict[str, str]:
+def _replace_none_with_empty_string(params: dict[str, str]) -> dict[str, str]:
     """パラメータ内のNoneの値を空文字に修正する"""
     for key, value in params.items():
         if value is None:
@@ -16,7 +17,7 @@ def _replace_none_with_empty_string(params: Dict[str, str]) -> Dict[str, str]:
     return params
 
 
-def validate_input(form: FlaskForm) -> Tuple[bool, Dict[str, str]]:
+def validate_input(form: FlaskForm) -> tuple[bool, dict[str, str]]:
     """フォームのバリデーションを実行し、不正な値をクリアしたパラメータを返す"""
     is_valid = form.validate()
     if is_valid:
@@ -36,9 +37,9 @@ def validate_input(form: FlaskForm) -> Tuple[bool, Dict[str, str]]:
 def search_contact_emails(query: Query, form: FlaskForm) -> Query:
     """問い合わせメールの検索ロジック"""
     if form.start_date.data:
-        query = query.filter(ContactEmail.received_at >= form.start_date.data)
+        query = query.filter(ContactEmail.received_at >= start_of_day(form.start_date.data))  # type: ignore
     if form.end_date.data:
-        query = query.filter(ContactEmail.received_at <= form.end_date.data)
+        query = query.filter(ContactEmail.received_at <= end_of_day(form.end_date.data))  # type: ignore
     if form.keyword.data:
         query = query.filter(
             ContactEmail.content.like(f"%{form.keyword.data}%")  # type: ignore
@@ -55,9 +56,9 @@ def search_contact_emails(query: Query, form: FlaskForm) -> Query:
 def search_job_emails(query: Query, form: FlaskForm) -> Query:
     """求人関係メールの検索ロジック"""
     if form.start_date.data:
-        query = query.filter(JobEmail.received_at >= form.start_date.data)
+        query = query.filter(JobEmail.received_at >= start_of_day(form.start_date.data))  # type: ignore
     if form.end_date.data:
-        query = query.filter(JobEmail.received_at <= form.end_date.data)
+        query = query.filter(JobEmail.received_at <= end_of_day(form.end_date.data))  # type: ignore
     if form.keyword.data:
         query = query.filter(
             JobEmail.content.like(f"%{form.keyword.data}%")  # type: ignore
@@ -66,6 +67,16 @@ def search_job_emails(query: Query, form: FlaskForm) -> Query:
         )
 
     return query
+
+
+def start_of_day(date: datetime) -> datetime:
+    """開始日の00:00:00を返す"""
+    return datetime.combine(date, datetime.min.time())
+
+
+def end_of_day(date: datetime) -> datetime:
+    """終了日の23:59:59を返す"""
+    return datetime.combine(date, datetime.max.time())
 
 
 def paginate_query(query: Query, page: int, per_page: int) -> tuple[Query, Pagination]:
