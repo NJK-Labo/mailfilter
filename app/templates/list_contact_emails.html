@@ -88,10 +88,10 @@
     </table>
     <div class="container-fluid mt-5 mb-2">
         <nav aria-label="Page navigation" class="row align-items-center">
-            <div class="col-4 text-start">{{ pagination.info }}</div>
-            <div class="col-4 text-center">{{ pagination.links }}</div>
-            <div class="col-4 text-end">{{ pagination.page }} / {{ pagination.total_pages }} ページ</div>
-        </nav>        
+            <div class="col-12 col-md-4 text-start mb-3 mb-md-0">{{ pagination.info }}</div>
+            <div class="col-12 col-md-4 text-center mb-3 mb-md-0">{{ pagination.links }}</div>
+            <div class="col-12 col-md-4 text-end mb-3 mb-md-0">{{ pagination.page }} / {{ pagination.total_pages }} ページ</div>
+        </nav>
     </div>
 </div>
 {% include '_mail_delete_modal.html' %}
