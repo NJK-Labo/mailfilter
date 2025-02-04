@@ -78,7 +78,7 @@
                     </form>
                     <button id="delete-button-{{ mail.id }}" class="btn btn-outline-danger btn-sm p-1">削除</button>
                 </td>
-                <td class="ps-4">{{mail.received_at}}</td>
+                <td class="ps-4">{{mail.received_at.strftime('%Y/%m/%d %H:%M:%S')}}</td>
                 <td>{{mail.contact_type | contact_type}}</td>
                 <td>{{mail.content | truncate(30, True, end='...')}}</td>
                 <td>{{mail.email}}</td>

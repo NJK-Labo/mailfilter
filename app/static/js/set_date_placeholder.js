@@ -10,7 +10,7 @@ const setupDateInput = (id, placeholderText) => {
     };
 
     // 初期設定はtext（プレースホルダー表示）
-    toggleType(false);
+    !dateInput.value && toggleType(false);
 
     // フォーカスされた時またはフォーカスが外れた時に設定
     dateInput.addEventListener('focus', () => toggleType(true));
