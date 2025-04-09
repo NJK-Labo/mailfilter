@@ -142,6 +142,30 @@ def delete_job_email(id: int) -> ResponseReturnValue:
     return redirect(url_for("main.list_job_emails", **search_params))  # type: ignore
 
 
+@bp.route("/contact-emails/<int:id>/access", methods=["POST"])
+def access_contact_email(id: int) -> ResponseReturnValue:
+    """問い合わせメールアクセス処理"""
+    mail = db.session.get(ContactEmail, id)
+    if not mail:
+        abort(404)
+    mail.is_detail_accessed = True
+    db.session.commit()
+
+    return redirect(url_for("main.show_contact_email", id=id))
+
+
+@bp.route("/job-emails/<int:id>/access", methods=["POST"])
+def access_job_email(id: int) -> ResponseReturnValue:
+    """求人関係メールアクセス処理"""
+    mail = db.session.get(JobEmail, id)
+    if not mail:
+        abort(404)
+    mail.is_detail_accessed = True
+    db.session.commit()
+
+    return redirect(url_for("main.show_job_email", id=id))
+
+
 @bp.app_errorhandler(NotFound)
 def show_404_page(error: HTTPException) -> ResponseReturnValue:
     """404 NotFoundエラー画面"""

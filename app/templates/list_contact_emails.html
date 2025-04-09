@@ -69,7 +69,10 @@
                 {% if mail.is_detail_accessed %}
                     <a href="{{ url_for('main.show_contact_email', id=mail.id) }}" class="btn btn-outline-primary btn-sm p-1">詳細</a>
                 {% else %}
-                    {{ access_button_form.access_button }}
+                    <form action="{{ url_for('main.access_contact_email', id=mail.id) }}" method="POST">
+                        {{ access_button_form.hidden_tag() }}
+                        {{ access_button_form.access_button }}
+                    </form>
                 {% endif %}
                 </td>
                 <td class="px-1 max-width-40">
