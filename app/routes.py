@@ -6,7 +6,7 @@ from flask_paginate import get_page_parameter  # type: ignore
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
 from app import db, services
-from app.forms import ContactEmailSearchForm, JobEmailSearchForm
+from app.forms import ContactEmailSearchForm, JobEmailSearchForm, NjkMemoForm
 from app.models import ContactEmail, JobEmail
 
 bp = Blueprint("main", __name__)
@@ -55,7 +55,8 @@ def show_contact_email(id: int) -> ResponseReturnValue:
     mail = db.session.get(ContactEmail, id)
     if not mail:
         abort(404)
-    return render_template("show_contact_email.html", mail=mail)
+    form = NjkMemoForm()
+    return render_template("show_contact_email.html", mail=mail, form=form)
 
 
 @bp.route("/contact_emails/<int:id>", methods=["POST"])
@@ -106,7 +107,8 @@ def show_job_email(id: int) -> ResponseReturnValue:
     mail = db.session.get(JobEmail, id)
     if not mail:
         abort(404)
-    return render_template("show_job_email.html", mail=mail)
+    form = NjkMemoForm()
+    return render_template("show_job_email.html", mail=mail, form=form)
 
 
 @bp.route("/job_emails/<int:id>", methods=["POST"])
