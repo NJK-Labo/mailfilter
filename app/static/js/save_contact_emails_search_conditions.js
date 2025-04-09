@@ -19,3 +19,19 @@ detailsLinks.forEach(link => {
         });
     }
 });
+
+// フォームから詳細画面に遷移する際も、セッションストレージに検索条件を保存する
+const detailForms = document.querySelectorAll('form[action^="/contact-emails/"][method="POST"]');
+
+detailForms.forEach(form => {
+    form.addEventListener('submit', (event) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        let paramsObject = {};
+
+        urlParams.forEach((value, key) => {
+            paramsObject[key] = value;
+        });
+
+        sessionStorage.setItem('contactEmailsSearchParams', JSON.stringify(paramsObject));
+    });
+});
