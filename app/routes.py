@@ -6,7 +6,7 @@ from flask_paginate import get_page_parameter  # type: ignore
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
 from app import db, services
-from app.forms import ContactEmailSearchForm, JobEmailSearchForm, NjkMemoForm
+from app.forms import AccessButtonForm, ContactEmailSearchForm, JobEmailSearchForm, NjkMemoForm
 from app.models import ContactEmail, JobEmail
 
 bp = Blueprint("main", __name__)
@@ -46,7 +46,15 @@ def list_contact_emails() -> ResponseReturnValue:
     page = request.args.get(get_page_parameter(), type=int, default=1)
     mails, pagination = services.paginate_query(query=query, page=page, per_page=PER_PAGE)
 
-    return render_template("list_contact_emails.html", mails=mails, form=form, pagination=pagination)
+    access_button_form = AccessButtonForm()
+
+    return render_template(
+        "list_contact_emails.html",
+        mails=mails,
+        form=form,
+        pagination=pagination,
+        access_button_form=access_button_form,
+        )
 
 
 @bp.route("/contact-emails/<int:id>", methods=["GET"])
@@ -98,7 +106,15 @@ def list_job_emails() -> ResponseReturnValue:
     page = request.args.get(get_page_parameter(), type=int, default=1)
     mails, pagination = services.paginate_query(query=query, page=page, per_page=PER_PAGE)
 
-    return render_template("list_job_emails.html", mails=mails, form=form, pagination=pagination)
+    access_button_form = AccessButtonForm()
+
+    return render_template(
+        "list_job_emails.html",
+        mails=mails,
+        form=form,
+        pagination=pagination,
+        access_button_form=access_button_form
+        )
 
 
 @bp.route("/job-emails/<int:id>", methods=["GET"])

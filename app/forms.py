@@ -64,3 +64,8 @@ class NjkMemoForm(FlaskForm):
         validators=[Optional(), Length(max=100, message="NJK記入欄は100文字以内で入力してください。")],
     )
     submit = SubmitField("保存", render_kw={"class": "btn btn-outline-success mt-2"})
+
+class  AccessButtonForm(FlaskForm):
+    """詳細アクセス処理用フォームクラス"""
+
+    access_button = SubmitField("詳細", render_kw={"class": "btn btn-outline-primary btn-sm p-1"})
