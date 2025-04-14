@@ -9,7 +9,7 @@
     <script src="{{url_for('static', filename='js/set_selectbox_color.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/reset_form.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/save_contact_emails_search_conditions.js')}}" type="module"></script>
-    <script src="{{url_for('static', filename='js/set_delete_button.js')}}" type="module"></script>
+    <script src="{{url_for('static', filename='js/modal.js')}}" type="module"></script>
 {% endblock %}
 
 {% block content %}
@@ -85,7 +85,13 @@
                             <input type="hidden" name="{{ key }}" value="{{ value }}">
                         {% endfor %}
                     </form>
-                    <button id="delete-button-{{ mail.id }}" class="btn btn-outline-danger btn-sm p-1">削除</button>
+                    <button id="delete-button-{{ mail.id }}" 
+                        data-modal-target="#deleteModal" 
+                        data-confirm-target="#confirmDeleteBtn" 
+                        data-form-id="delete-form-{{ mail.id }}"
+                        class="btn btn-outline-danger btn-sm p-1">
+                    削除
+                    </button>
                 </td>
                 <td class="px-1">
                     {% if mail.is_detail_accessed %}
@@ -117,5 +123,19 @@
         </nav>
     </div>
 </div>
-{% include '_mail_delete_modal.html' %}
+
+{% from "_helpers.html" import modal_dialog %}
+
+<!-- メール削除時のモーダルダイアログ -->
+{{ modal_dialog(
+    modal_id='deleteModal',
+    modal_label='確認',
+    icon_class='bi bi-exclamation-triangle-fill',
+    body_message='メールを削除します。よろしいですか？',
+    confirm_btn_id='confirmDeleteBtn',
+    confirm_btn_text='はい',
+    confirm_btn_class='btn-danger',
+    cancel_btn_text='いいえ',
+) }}
+
 {% endblock %}
