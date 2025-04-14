@@ -19,12 +19,22 @@ function openModalWithAction(modalSelector, confirmButtonSelector, onConfirm) {
 
 document.querySelectorAll('[data-modal-target]').forEach((button) => {
     button.addEventListener('click', (event) => {
+        const formId = event.currentTarget.getAttribute('data-form-id');
+        const formElement = document.getElementById(formId);
+
+        // まずブラウザのバリデーションを実行する
+        if (!formElement.checkValidity()) {
+            // バリデーションエラーがあればエラーメッセージを表示
+            formElement.reportValidity();
+            return; // ここで処理を中断してダイアログは表示しない
+        }
+        
+        // バリデーションOKの場合にのみ、ダイアログ（モーダル）を表示
         const targetModal = event.currentTarget.getAttribute('data-modal-target');
         const confirmTarget = event.currentTarget.getAttribute('data-confirm-target');
-        const formId = event.currentTarget.getAttribute('data-form-id');
 
         openModalWithAction(targetModal, confirmTarget, () => {
-            document.getElementById(formId).submit();
+            formElement.submit();
         });
     });
 });

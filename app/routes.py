@@ -67,6 +67,26 @@ def show_contact_email(id: int) -> ResponseReturnValue:
     return render_template("show_contact_email.html", mail=mail, form=form)
 
 
+@bp.route("/contact-emails/<int:id>/update", methods=["POST"])
+def update_contact_email(id: int) -> ResponseReturnValue:
+    """問い合わせメールの更新処理"""
+    mail = db.session.get(ContactEmail, id)
+    if not mail:
+        abort(404)
+
+    form = NjkMemoForm()
+    if form.validate_on_submit():
+        mail.njk_memo = form.njk_memo.data
+        # 入力が空文字や空白のみの場合は False、それ以外は True
+        mail.is_njk_memo_present = bool(form.njk_memo.data.strip())
+        db.session.commit()
+        flash("NJK記入欄を保存しました", "success")
+    else:
+        flash("入力内容にエラーがあります。再度ご確認ください。", "warning")
+
+    return redirect(url_for("main.show_contact_email", id=id))
+
+
 @bp.route("/contact_emails/<int:id>", methods=["POST"])
 def delete_contact_email(id: int) -> ResponseReturnValue:
     """問い合わせメール削除"""
@@ -127,6 +147,26 @@ def show_job_email(id: int) -> ResponseReturnValue:
     return render_template("show_job_email.html", mail=mail, form=form)
 
 
+@bp.route("/job-emails/<int:id>/update", methods=["POST"])
+def update_job_email(id: int) -> ResponseReturnValue:
+    """求人関係メールの更新処理"""
+    mail = db.session.get(JobEmail, id)
+    if not mail:
+        abort(404)
+
+    form = NjkMemoForm()
+    if form.validate_on_submit():
+        mail.njk_memo = form.njk_memo.data
+        # 入力が空文字や空白のみの場合は False、それ以外は True
+        mail.is_njk_memo_present = bool(form.njk_memo.data.strip())
+        db.session.commit()
+        flash("NJK記入欄を保存しました", "success")
+    else:
+        flash("入力内容にエラーがあります。再度ご確認ください。", "warning")
+
+    return redirect(url_for("main.show_job_email", id=id))
+
+
 @bp.route("/job_emails/<int:id>", methods=["POST"])
 def delete_job_email(id: int) -> ResponseReturnValue:
     """求人関係メール削除"""
@@ -165,40 +205,6 @@ def access_job_email(id: int) -> ResponseReturnValue:
 
     return redirect(url_for("main.show_job_email", id=id))
 
-@bp.route("/contact-emails/<int:id>/update", methods=["POST"])
-def update_contact_email(id: int) -> ResponseReturnValue:
-    """問い合わせメールア更新処理"""
-    mail = db.session.get(ContactEmail, id)
-    if not mail:
-        abort(404)
-
-    form = NjkMemoForm()
-    mail.njk_memo = form.njk_memo.data
-    # フォームの入力が空文字（または空白だけ）の場合は False、それ以外は True
-    mail.is_njk_memo_present = bool(form.njk_memo.data.strip())
-
-    db.session.commit()
-
-    flash("NJK記入欄を保存しました", "success")
-    return redirect(url_for("main.show_contact_email", id=id))
-
-
-@bp.route("/job-emails/<int:id>/update", methods=["POST"])
-def update_job_email(id: int) -> ResponseReturnValue:
-    """求人関係メール更新処理"""
-    mail = db.session.get(JobEmail, id)
-    if not mail:
-        abort(404)
-
-    form = NjkMemoForm()
-    mail.njk_memo = form.njk_memo.data
-    # フォームの入力が空文字（または空白だけ）の場合は False、それ以外は True
-    mail.is_njk_memo_present = bool(form.njk_memo.data.strip())
-
-    db.session.commit()
-
-    flash("NJK記入欄を保存しました", "success")
-    return redirect(url_for("main.show_job_email", id=id))
 
 @bp.app_errorhandler(NotFound)
 def show_404_page(error: HTTPException) -> ResponseReturnValue:
