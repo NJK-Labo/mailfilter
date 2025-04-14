@@ -174,7 +174,8 @@ def update_contact_email(id: int) -> ResponseReturnValue:
 
     form = NjkMemoForm()
     mail.njk_memo = form.njk_memo.data
-    mail.is_njk_memo_present = True
+    # フォームの入力が空文字（または空白だけ）の場合は False、それ以外は True
+    mail.is_njk_memo_present = bool(form.njk_memo.data.strip())
 
     db.session.commit()
 
@@ -191,7 +192,8 @@ def update_job_email(id: int) -> ResponseReturnValue:
 
     form = NjkMemoForm()
     mail.njk_memo = form.njk_memo.data
-    mail.is_njk_memo_present = True
+    # フォームの入力が空文字（または空白だけ）の場合は False、それ以外は True
+    mail.is_njk_memo_present = bool(form.njk_memo.data.strip())
 
     db.session.commit()
 
