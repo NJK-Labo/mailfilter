@@ -75,7 +75,7 @@
                 <td class="px-1 max-width-40">
                     <!-- 削除ボタン -->
                     <form id="delete-form-{{ mail.id }}" action="{{ url_for('main.delete_job_email', id=mail.id) }}" method="POST" style="display: none;">
-                        {{ form.hidden_tag() }}
+                        {{ delete_button_form.hidden_tag() }}
                         <input type="hidden" name="_method" value="DELETE">
                         <!-- クエリパラメータをhiddenフォームとして追加 -->
                         {% for key, value in request.args.items() %}

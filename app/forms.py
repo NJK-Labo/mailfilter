@@ -69,3 +69,8 @@ class  AccessButtonForm(FlaskForm):
     """詳細アクセス処理用フォームクラス"""
 
     access_button = SubmitField("詳細", render_kw={"class": "btn btn-outline-primary btn-sm p-1"})
+
+class MailDeleteButtonForm(FlaskForm):
+    """メール削除ボタン処理用フォームクラス"""
+
+    pass  # CSRFトークン生成用のため胥吏なし

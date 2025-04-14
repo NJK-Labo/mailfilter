@@ -6,7 +6,7 @@ from flask_paginate import get_page_parameter  # type: ignore
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
 from app import db, services
-from app.forms import AccessButtonForm, ContactEmailSearchForm, JobEmailSearchForm, NjkMemoForm
+from app.forms import AccessButtonForm, ContactEmailSearchForm, JobEmailSearchForm, MailDeleteButtonForm, NjkMemoForm
 from app.models import ContactEmail, JobEmail
 
 bp = Blueprint("main", __name__)
@@ -46,6 +46,7 @@ def list_contact_emails() -> ResponseReturnValue:
     page = request.args.get(get_page_parameter(), type=int, default=1)
     mails, pagination = services.paginate_query(query=query, page=page, per_page=PER_PAGE)
 
+    delete_button_form = MailDeleteButtonForm()
     access_button_form = AccessButtonForm()
 
     return render_template(
@@ -53,6 +54,7 @@ def list_contact_emails() -> ResponseReturnValue:
         mails=mails,
         form=form,
         pagination=pagination,
+        delete_button_form=delete_button_form,
         access_button_form=access_button_form,
         )
 
@@ -99,6 +101,7 @@ def delete_contact_email(id: int) -> ResponseReturnValue:
 
     # 検索条件を削除前の状態に設定する
     search_params = request.form.to_dict()
+    search_params.pop('csrf_token', None)  # csrf_tokenは不要
     return redirect(url_for("main.list_contact_emails", **search_params))  # type: ignore
 
 
@@ -126,6 +129,7 @@ def list_job_emails() -> ResponseReturnValue:
     page = request.args.get(get_page_parameter(), type=int, default=1)
     mails, pagination = services.paginate_query(query=query, page=page, per_page=PER_PAGE)
 
+    delete_button_form = MailDeleteButtonForm()
     access_button_form = AccessButtonForm()
 
     return render_template(
@@ -133,7 +137,8 @@ def list_job_emails() -> ResponseReturnValue:
         mails=mails,
         form=form,
         pagination=pagination,
-        access_button_form=access_button_form
+        delete_button_form=delete_button_form,
+        access_button_form=access_button_form,
         )
 
 
@@ -179,6 +184,7 @@ def delete_job_email(id: int) -> ResponseReturnValue:
 
     # 検索条件を削除前の状態に設定する
     search_params = request.form.to_dict()
+    search_params.pop('csrf_token', None)  # csrf_tokenは不要
     return redirect(url_for("main.list_job_emails", **search_params))  # type: ignore
 
 
