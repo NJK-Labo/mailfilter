@@ -63,7 +63,7 @@ def show_contact_email(id: int) -> ResponseReturnValue:
     mail = db.session.get(ContactEmail, id)
     if not mail:
         abort(404)
-    form = NjkMemoForm()
+    form = NjkMemoForm(njk_memo=mail.njk_memo)
     return render_template("show_contact_email.html", mail=mail, form=form)
 
 
@@ -123,7 +123,7 @@ def show_job_email(id: int) -> ResponseReturnValue:
     mail = db.session.get(JobEmail, id)
     if not mail:
         abort(404)
-    form = NjkMemoForm()
+    form = NjkMemoForm(njk_memo=mail.njk_memo)
     return render_template("show_job_email.html", mail=mail, form=form)
 
 
@@ -165,6 +165,38 @@ def access_job_email(id: int) -> ResponseReturnValue:
 
     return redirect(url_for("main.show_job_email", id=id))
 
+@bp.route("/contact-emails/<int:id>/update", methods=["POST"])
+def update_contact_email(id: int) -> ResponseReturnValue:
+    """問い合わせメールア更新処理"""
+    mail = db.session.get(ContactEmail, id)
+    if not mail:
+        abort(404)
+
+    form = NjkMemoForm()
+    mail.njk_memo = form.njk_memo.data
+    mail.is_njk_memo_present = True
+
+    db.session.commit()
+
+    flash("NJK記入欄を保存しました", "success")
+    return redirect(url_for("main.show_contact_email", id=id))
+
+
+@bp.route("/job-emails/<int:id>/update", methods=["POST"])
+def update_job_email(id: int) -> ResponseReturnValue:
+    """求人関係メール更新処理"""
+    mail = db.session.get(JobEmail, id)
+    if not mail:
+        abort(404)
+
+    form = NjkMemoForm()
+    mail.njk_memo = form.njk_memo.data
+    mail.is_njk_memo_present = True
+
+    db.session.commit()
+
+    flash("NJK記入欄を保存しました", "success")
+    return redirect(url_for("main.show_job_email", id=id))
 
 @bp.app_errorhandler(NotFound)
 def show_404_page(error: HTTPException) -> ResponseReturnValue:

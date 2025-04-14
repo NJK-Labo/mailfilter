@@ -17,8 +17,11 @@
         <div class="card-header">NJK記入欄（自由記入） <span class="text-success">※ 100文字まで入力できます</span></div>
         <div class="card-body">
             <p class="card-text">
-                {{ form.njk_memo }}
-                {{ form.submit }}
+                <form method="POST" action="{{ url_for('main.update_job_email', id=mail.id) }}">
+                    {{ form.hidden_tag() }}
+                    {{ form.njk_memo }}
+                    {{ form.submit }}
+                </form>
             </p>
         </div>
     </div>
