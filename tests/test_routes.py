@@ -108,7 +108,7 @@ def test_500_error(client):
     assert "サーバーエラーが発生しました".encode("utf-8") in response.data
 
 
-def test_update_contact_email_valid(client, init_contact_email):
+def test_update_contact_email_valid(client, db_session, init_contact_email):
     """
     問い合わせメール更新テスト（有効な入力: 100文字以内、通常テキスト）
     """
@@ -122,13 +122,13 @@ def test_update_contact_email_valid(client, init_contact_email):
     # 正常なリダイレクトが完了していれば、200が返る
     assert response.status_code == 200
 
-    updated_mail = ContactEmail.query.get(mail_id)
+    updated_mail = db_session.get(ContactEmail, mail_id)
     # メモが更新され、空白でないため is_njk_memo_present が True となる
     assert updated_mail.njk_memo == new_memo
     assert updated_mail.is_njk_memo_present is True
 
 
-def test_update_contact_email_valid_whitespace(client, init_contact_email):
+def test_update_contact_email_valid_whitespace(client, db_session, init_contact_email):
     """
     問い合わせメール更新テスト（有効な入力: 空白のみ）
 
@@ -143,12 +143,13 @@ def test_update_contact_email_valid_whitespace(client, init_contact_email):
         follow_redirects=True
     )
     assert response.status_code == 200
-    updated_mail = ContactEmail.query.get(mail_id)
+
+    updated_mail = db_session.get(ContactEmail, mail_id)
     assert updated_mail.njk_memo == whitespace_input
     assert updated_mail.is_njk_memo_present is False
 
 
-def test_update_contact_email_over_length(client, init_contact_email):
+def test_update_contact_email_over_length(client, db_session, init_contact_email):
     """
     問い合わせメール更新テスト（無効な入力: 100文字を超える）
 
@@ -164,14 +165,15 @@ def test_update_contact_email_over_length(client, init_contact_email):
         follow_redirects=True
     )
     assert response.status_code == 200
-    updated_mail = ContactEmail.query.get(mail_id)
+
+    updated_mail = db_session.get(ContactEmail, mail_id)
     # バリデーションエラー発生の場合、更新は行われず元の値が保持される
     assert updated_mail.njk_memo == original_memo
     # エラーFlashメッセージの確認
     assert "入力内容にエラーがあります".encode("utf-8") in response.data
 
 
-def test_update_job_email_valid(client, init_job_email):
+def test_update_job_email_valid(client, db_session, init_job_email):
     """
     求人メール更新テスト（有効な入力: 100文字以内、通常テキスト）
     """
@@ -183,12 +185,13 @@ def test_update_job_email_valid(client, init_job_email):
         follow_redirects=True
     )
     assert response.status_code == 200
-    updated_mail = JobEmail.query.get(mail_id)
+
+    updated_mail = db_session.get(JobEmail, mail_id)
     assert updated_mail.njk_memo == new_memo
     assert updated_mail.is_njk_memo_present is True
 
 
-def test_update_job_email_valid_whitespace(client, init_job_email):
+def test_update_job_email_valid_whitespace(client, db_session, init_job_email):
     """
     求人メール更新テスト（有効な入力: 空白のみ）
 
@@ -202,12 +205,13 @@ def test_update_job_email_valid_whitespace(client, init_job_email):
         follow_redirects=True
     )
     assert response.status_code == 200
-    updated_mail = JobEmail.query.get(mail_id)
+
+    updated_mail = db_session.get(JobEmail, mail_id)
     assert updated_mail.njk_memo == whitespace_input
     assert updated_mail.is_njk_memo_present is False
 
 
-def test_update_job_email_over_length(client, init_job_email):
+def test_update_job_email_over_length(client, db_session, init_job_email):
     """
     求人メール更新テスト（無効な入力: 100文字を超える）
 
@@ -222,7 +226,8 @@ def test_update_job_email_over_length(client, init_job_email):
         follow_redirects=True
     )
     assert response.status_code == 200
-    updated_mail = JobEmail.query.get(mail_id)
+
+    updated_mail = db_session.get(JobEmail, mail_id)
     # 入力が更新されず、元の値がそのまま残ることを確認
     assert updated_mail.njk_memo == original_memo
     # エラーFlashメッセージの確認
