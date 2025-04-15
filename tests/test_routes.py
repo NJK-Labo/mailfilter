@@ -26,11 +26,11 @@ def test_list_job_emails(client, init_job_emails):
     """求人関係メール一覧画面で複数件のレコードが正しく表示されるかテスト"""
     response = client.get("/job-emails")
     assert response.status_code == 200
-    assert b"Content1" in response.data
-    assert b"Content2" in response.data
+    assert b"Subject1" in response.data
+    assert b"Subject2" in response.data
 
     # データが正しくソートされていることを確認（`received_at`の降順）
-    assert response.data.index(b"Content2") < response.data.index(b"Content1")
+    assert response.data.index(b"Subject2") < response.data.index(b"Subject1")
 
 
 def test_show_contact_email(client, init_contact_emails):
