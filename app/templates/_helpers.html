@@ -1,3 +1,4 @@
+<!-- 受信日時のソートリンクを生成するマクロ -->
 {% macro toggle_received_at_link(endpoint, page_params) %}
 {% set current_order = page_params.pop("order", None) %}
 {% set _ = page_params.pop("page", None) %}
@@ -7,4 +8,34 @@
     {% else %}
         <a href="{{ url_for(endpoint, order='asc', page=1, **page_params) }}">受信日時▼</a>
     {% endif %}
+{% endmacro %}
+
+<!-- 共通なモーダルダイアログを生成するマクロ -->
+{% macro modal_dialog(modal_id, modal_label, icon_class, body_message, confirm_btn_id, confirm_btn_text, cancel_btn_text, confirm_btn_class='btn-danger') %}
+<div class="modal fade" id="{{ modal_id }}" tabindex="-1" aria-labelledby="{{ modal_id }}Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary-subtle">
+                <p class="modal-title h5" id="{{ modal_id }}Label">
+                    {% if icon_class %}
+                        <i class="{{ icon_class }} me-2"></i>
+                    {% endif %}
+                    {{ modal_label }}
+                </p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body border-bottom-0">
+                {{ body_message }}
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" id="{{ confirm_btn_id }}" class="btn {{ confirm_btn_class }}">
+                    {{ confirm_btn_text }}
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    {{ cancel_btn_text }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endmacro %}

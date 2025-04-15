@@ -6,7 +6,7 @@ from flask_paginate import get_page_parameter  # type: ignore
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
 from app import db, services
-from app.forms import ContactEmailSearchForm, JobEmailSearchForm
+from app.forms import AccessButtonForm, ContactEmailSearchForm, JobEmailSearchForm, MailDeleteButtonForm, NjkMemoForm
 from app.models import ContactEmail, JobEmail
 
 bp = Blueprint("main", __name__)
@@ -46,7 +46,17 @@ def list_contact_emails() -> ResponseReturnValue:
     page = request.args.get(get_page_parameter(), type=int, default=1)
     mails, pagination = services.paginate_query(query=query, page=page, per_page=PER_PAGE)
 
-    return render_template("list_contact_emails.html", mails=mails, form=form, pagination=pagination)
+    delete_button_form = MailDeleteButtonForm()
+    access_button_form = AccessButtonForm()
+
+    return render_template(
+        "list_contact_emails.html",
+        mails=mails,
+        form=form,
+        pagination=pagination,
+        delete_button_form=delete_button_form,
+        access_button_form=access_button_form,
+        )
 
 
 @bp.route("/contact-emails/<int:id>", methods=["GET"])
@@ -55,7 +65,28 @@ def show_contact_email(id: int) -> ResponseReturnValue:
     mail = db.session.get(ContactEmail, id)
     if not mail:
         abort(404)
-    return render_template("show_contact_email.html", mail=mail)
+    form = NjkMemoForm(njk_memo=mail.njk_memo)
+    return render_template("show_contact_email.html", mail=mail, form=form)
+
+
+@bp.route("/contact-emails/<int:id>/update", methods=["POST"])
+def update_contact_email(id: int) -> ResponseReturnValue:
+    """問い合わせメールの更新処理"""
+    mail = db.session.get(ContactEmail, id)
+    if not mail:
+        abort(404)
+
+    form = NjkMemoForm()
+    if form.validate_on_submit():
+        mail.njk_memo = form.njk_memo.data
+        # 入力が空文字や空白のみの場合は False、それ以外は True
+        mail.is_njk_memo_present = bool(form.njk_memo.data.strip())
+        db.session.commit()
+        flash("NJK記入欄を保存しました", "success")
+    else:
+        flash("入力内容にエラーがあります。再度ご確認ください。", "warning")
+
+    return redirect(url_for("main.show_contact_email", id=id))
 
 
 @bp.route("/contact_emails/<int:id>", methods=["POST"])
@@ -70,6 +101,7 @@ def delete_contact_email(id: int) -> ResponseReturnValue:
 
     # 検索条件を削除前の状態に設定する
     search_params = request.form.to_dict()
+    search_params.pop('csrf_token', None)  # csrf_tokenは不要
     return redirect(url_for("main.list_contact_emails", **search_params))  # type: ignore
 
 
@@ -97,7 +129,17 @@ def list_job_emails() -> ResponseReturnValue:
     page = request.args.get(get_page_parameter(), type=int, default=1)
     mails, pagination = services.paginate_query(query=query, page=page, per_page=PER_PAGE)
 
-    return render_template("list_job_emails.html", mails=mails, form=form, pagination=pagination)
+    delete_button_form = MailDeleteButtonForm()
+    access_button_form = AccessButtonForm()
+
+    return render_template(
+        "list_job_emails.html",
+        mails=mails,
+        form=form,
+        pagination=pagination,
+        delete_button_form=delete_button_form,
+        access_button_form=access_button_form,
+        )
 
 
 @bp.route("/job-emails/<int:id>", methods=["GET"])
@@ -106,7 +148,28 @@ def show_job_email(id: int) -> ResponseReturnValue:
     mail = db.session.get(JobEmail, id)
     if not mail:
         abort(404)
-    return render_template("show_job_email.html", mail=mail)
+    form = NjkMemoForm(njk_memo=mail.njk_memo)
+    return render_template("show_job_email.html", mail=mail, form=form)
+
+
+@bp.route("/job-emails/<int:id>/update", methods=["POST"])
+def update_job_email(id: int) -> ResponseReturnValue:
+    """求人関係メールの更新処理"""
+    mail = db.session.get(JobEmail, id)
+    if not mail:
+        abort(404)
+
+    form = NjkMemoForm()
+    if form.validate_on_submit():
+        mail.njk_memo = form.njk_memo.data
+        # 入力が空文字や空白のみの場合は False、それ以外は True
+        mail.is_njk_memo_present = bool(form.njk_memo.data.strip())
+        db.session.commit()
+        flash("NJK記入欄を保存しました", "success")
+    else:
+        flash("入力内容にエラーがあります。再度ご確認ください。", "warning")
+
+    return redirect(url_for("main.show_job_email", id=id))
 
 
 @bp.route("/job_emails/<int:id>", methods=["POST"])
@@ -121,7 +184,32 @@ def delete_job_email(id: int) -> ResponseReturnValue:
 
     # 検索条件を削除前の状態に設定する
     search_params = request.form.to_dict()
+    search_params.pop('csrf_token', None)  # csrf_tokenは不要
     return redirect(url_for("main.list_job_emails", **search_params))  # type: ignore
+
+
+@bp.route("/contact-emails/<int:id>/access", methods=["POST"])
+def access_contact_email(id: int) -> ResponseReturnValue:
+    """問い合わせメールアクセス処理"""
+    mail = db.session.get(ContactEmail, id)
+    if not mail:
+        abort(404)
+    mail.is_detail_accessed = True
+    db.session.commit()
+
+    return redirect(url_for("main.show_contact_email", id=id))
+
+
+@bp.route("/job-emails/<int:id>/access", methods=["POST"])
+def access_job_email(id: int) -> ResponseReturnValue:
+    """求人関係メールアクセス処理"""
+    mail = db.session.get(JobEmail, id)
+    if not mail:
+        abort(404)
+    mail.is_detail_accessed = True
+    db.session.commit()
+
+    return redirect(url_for("main.show_job_email", id=id))
 
 
 @bp.app_errorhandler(NotFound)

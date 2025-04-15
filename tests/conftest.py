@@ -14,6 +14,7 @@ from app.models import ContactEmail, JobEmail, db
 @pytest.fixture
 def app():
     app = create_app("testing")
+    app.config["WTF_CSRF_ENABLED"] = False  # CSRF 保護を無効化
     app.config["SERVER_NAME"] = "testserver"
     with app.app_context():
         yield app
@@ -29,9 +30,26 @@ def db_session(app):
 
 
 @pytest.fixture
-def client(app):
-    """Flaskのテストクライアント"""
+def client(app, db_session):
+    """Flaskのテストクライアント（dbセッションも初期化済み）"""
     return app.test_client()
+
+
+@pytest.fixture
+def init_contact_email(db_session):
+    contact_email = ContactEmail(
+        contact_type=1,
+        content="Test Kensa01",
+        name="検査一郎",
+        kana="ケンサイチロウ",
+        email="kensa1@example.com",
+        gender=1,
+        ip="10.0.0.10",
+        received_at=datetime(2025, 1, 11, 10, 10, 11),
+    )
+    db_session.add(contact_email)
+    db_session.commit()
+    return contact_email
 
 
 @pytest.fixture
@@ -61,6 +79,19 @@ def init_contact_emails(db_session):
         ]
     )
     db_session.commit()
+
+
+@pytest.fixture
+def init_job_email(db_session):
+    job_email = JobEmail(
+        subject="Test Kensa02",
+        email="kensa02@example.com",
+        content="検査02",
+        received_at=datetime(2025, 1, 11, 12, 10, 12),
+    )
+    db_session.add(job_email)
+    db_session.commit()
+    return job_email
 
 
 @pytest.fixture

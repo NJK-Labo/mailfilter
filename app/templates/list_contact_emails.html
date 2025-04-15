@@ -9,7 +9,7 @@
     <script src="{{url_for('static', filename='js/set_selectbox_color.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/reset_form.js')}}" type="module"></script>
     <script src="{{url_for('static', filename='js/save_contact_emails_search_conditions.js')}}" type="module"></script>
-    <script src="{{url_for('static', filename='js/set_delete_button.js')}}" type="module"></script>
+    <script src="{{url_for('static', filename='js/modal.js')}}" type="module"></script>
 {% endblock %}
 
 {% block content %}
@@ -54,6 +54,8 @@
             <tr>
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th class="ps-4">{{ toggle_received_at_link("main.list_contact_emails", request.args.to_dict()) }}</th>
                 <th>問い合わせ種別</th>
                 <th>問い合わせ内容</th>
@@ -62,26 +64,53 @@
         </thead>
         <tbody>
             {% for mail in mails %}
-            <tr>
+            <tr class="align-middle">
                 <td class="px-1 max-width-40">
+                {% if mail.is_detail_accessed %}
                     <a href="{{ url_for('main.show_contact_email', id=mail.id) }}" class="btn btn-outline-primary btn-sm p-1">詳細</a>
+                {% else %}
+                    <form action="{{ url_for('main.access_contact_email', id=mail.id) }}" method="POST">
+                        {{ access_button_form.hidden_tag() }}
+                        {{ access_button_form.access_button }}
+                    </form>
+                {% endif %}
                 </td>
                 <td class="px-1 max-width-40">
                     <!-- 削除ボタン -->
                     <form id="delete-form-{{ mail.id }}" action="{{ url_for('main.delete_contact_email', id=mail.id) }}" method="POST" style="display: none;">
-                        {{ form.hidden_tag() }}
+                        {{ delete_button_form.hidden_tag() }}
                         <input type="hidden" name="_method" value="DELETE">
                         <!-- クエリパラメータをhiddenフォームとして追加 -->
                         {% for key, value in request.args.items() %}
                             <input type="hidden" name="{{ key }}" value="{{ value }}">
                         {% endfor %}
                     </form>
-                    <button id="delete-button-{{ mail.id }}" class="btn btn-outline-danger btn-sm p-1">削除</button>
+                    <button id="delete-button-{{ mail.id }}" 
+                        data-modal-target="#deleteModal" 
+                        data-confirm-target="#confirmDeleteBtn" 
+                        data-form-id="delete-form-{{ mail.id }}"
+                        class="btn btn-outline-danger btn-sm p-1">
+                    削除
+                    </button>
                 </td>
-                <td class="ps-4">{{mail.received_at.strftime('%Y/%m/%d %H:%M:%S')}}</td>
+                <td class="px-1">
+                    {% if mail.is_detail_accessed %}
+                        <i class="bi bi-check2 text-success fs-6"></i>
+                    {% else %}
+                        <i class="bi bi-check2 text-success text-opacity-25 fs-6"></i>
+                    {% endif %}
+                </td>
+                <td class="px-1">
+                    {% if mail.is_njk_memo_present %}
+                        <i class="bi bi-journal-text text-success fs-6"></i>
+                    {% else %}
+                        <i class="bi bi-journal-text text-success text-opacity-25 fs-6"></i>
+                    {% endif %}
+                </td>
+                <td>{{mail.received_at.strftime('%Y/%m/%d %H:%M:%S')}}</td>
                 <td>{{mail.contact_type | contact_type}}</td>
-                <td>{{mail.content | truncate(30, True, end='...')}}</td>
-                <td>{{mail.email | truncate(24, True, end='...')}}</td>
+                <td>{{mail.content | truncate(28, True, end='...')}}</td>
+                <td>{{mail.email | truncate(18, True, end='...')}}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -94,5 +123,19 @@
         </nav>
     </div>
 </div>
-{% include '_mail_delete_modal.html' %}
+
+{% from "_helpers.html" import modal_dialog %}
+
+<!-- メール削除時のモーダルダイアログ -->
+{{ modal_dialog(
+    modal_id='deleteModal',
+    modal_label='確認',
+    icon_class='bi bi-exclamation-triangle-fill',
+    body_message='メールを削除します。よろしいですか？',
+    confirm_btn_id='confirmDeleteBtn',
+    confirm_btn_text='はい',
+    confirm_btn_class='btn-danger',
+    cancel_btn_text='いいえ',
+) }}
+
 {% endblock %}

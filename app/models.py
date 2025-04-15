@@ -21,6 +21,14 @@ class ContactEmail(db.Model):  # type: ignore
     gender: int = db.Column(db.Integer, nullable=False)
     ip: str = db.Column(db.String(200), nullable=False)
     received_at: datetime = db.Column(db.DateTime, nullable=False, index=True, default=Config.now_jst)
+
+    # NJK記入欄
+    njk_memo: str = db.Column(db.String(255), nullable=True)
+    # NJK記入済みフラグ
+    is_njk_memo_present: bool = db.Column(db.Boolean, nullable=False, default=False)
+    # 閲覧済みフラグ
+    is_detail_accessed: bool = db.Column(db.Boolean, nullable=False, default=False)
+
     created_at: datetime = db.Column(db.DateTime, nullable=False, default=Config.now_jst)
     updated_at: datetime = db.Column(db.DateTime, nullable=True, default=Config.now_jst, onupdate=Config.now_jst)
 
@@ -35,5 +43,13 @@ class JobEmail(db.Model):  # type: ignore
     email: str = db.Column(db.String(200), nullable=False)
     content: str = db.Column(db.Text, nullable=False)
     received_at: datetime = db.Column(db.DateTime, nullable=False, index=True, default=Config.now_jst)
+
+    # NJK記入欄
+    njk_memo: str = db.Column(db.String(255), nullable=True)
+    # NJK記入済みフラグ
+    is_njk_memo_present: bool = db.Column(db.Boolean, nullable=False, default=False)
+    # 閲覧済みフラグ
+    is_detail_accessed: bool = db.Column(db.Boolean, nullable=False, default=False)
+
     created_at: datetime = db.Column(db.DateTime, nullable=False, default=Config.now_jst)
     updated_at: datetime = db.Column(db.DateTime, nullable=True, default=Config.now_jst, onupdate=Config.now_jst)

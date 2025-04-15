@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm  # type: ignore
-from wtforms.fields import DateField, SearchField, SelectField, SubmitField  # type: ignore
+from wtforms.fields import DateField, SearchField, SelectField, SubmitField, TextAreaField  # type: ignore
 from wtforms.validators import Length, Optional, ValidationError  # type: ignore
 
 
@@ -54,3 +54,23 @@ class JobEmailSearchForm(FlaskForm):
     end_date = DateField("検索対象期間（終了）", format="%Y-%m-%d", validators=[Optional()])
 
     search = SubmitField("検索")
+
+class NjkMemoForm(FlaskForm):
+    """各メール内のNJK記入欄フォームクラス"""
+
+    njk_memo = TextAreaField(
+        "NJK記入欄",
+        render_kw={"placeholder": "NJK記入欄", "maxlength": 100, "rows": 3, "class": "form-control"},
+        validators=[Optional(), Length(max=100, message="NJK記入欄は100文字以内で入力してください。")],
+    )
+    submit = SubmitField("保存", render_kw={"class": "btn btn-outline-success mt-2"})
+
+class  AccessButtonForm(FlaskForm):
+    """詳細アクセス処理用フォームクラス"""
+
+    access_button = SubmitField("詳細", render_kw={"class": "btn btn-outline-primary btn-sm p-1"})
+
+class MailDeleteButtonForm(FlaskForm):
+    """メール削除ボタン処理用フォームクラス"""
+
+    pass  # CSRFトークン生成用のため胥吏なし
