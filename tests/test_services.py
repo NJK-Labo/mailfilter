@@ -134,6 +134,35 @@ def test_search_contact_emails_with_all_filters(client, init_contact_emails_for_
     assert results[0].content == "Test content 1"
 
 
+def test_search_contact_emails_with_percentage(client, init_contact_emails_for_specialchars_search):
+    """% が含まれる場合"""
+    form = ContactEmailSearchForm()
+    form.start_date.data = ""
+    form.end_date.data = ""
+    form.keyword.data = "%"
+    form.type.data = ""
+
+    query = ContactEmail.query
+    query = search_contact_emails(query, form)
+    results = query.all()
+    assert len(results) == 1
+    assert results[0].content == "Test content 100%"
+
+
+def test_search_contact_emails_with_underscore(client, init_contact_emails_for_specialchars_search):
+    """_が含まれる場合"""
+    form = ContactEmailSearchForm()
+    form.start_date.data = ""
+    form.end_date.data = ""
+    form.keyword.data = "_"
+    form.type.data = ""
+
+    query = ContactEmail.query
+    query = search_contact_emails(query, form)
+    results = query.all()
+    assert len(results) == 1
+    assert results[0].content == "Test content2 (・_・;)"
+
 # 求人関係メールの検索ロジックのテスト
 def test_search_job_emails_no_filters(client, init_job_emails_for_search):
     """検索条件がない場合は全てのメールを返す"""
@@ -202,6 +231,34 @@ def test_search_job_emails_with_all_filters(client, init_job_emails_for_search):
     results = query.all()
     assert len(results) == 1
     assert results[0].content == "Test content 1"
+
+
+def test_search_job_emails_with_percentage(client, init_job_emails_for_specialchars_search):
+    """% が含まれる場合"""
+    form = JobEmailSearchForm()
+    form.start_date.data = ""
+    form.end_date.data = ""
+    form.keyword.data = "%"
+
+    query = JobEmail.query
+    query = search_job_emails(query, form)
+    results = query.all()
+    assert len(results) == 1
+    assert results[0].subject == "Test subject 2%"
+
+
+def test_search_job_emails_with_underscore(client, init_job_emails_for_specialchars_search):
+    """_が含まれる場合"""
+    form = JobEmailSearchForm()
+    form.start_date.data = ""
+    form.end_date.data = ""
+    form.keyword.data = "_"
+
+    query = JobEmail.query
+    query = search_job_emails(query, form)
+    results = query.all()
+    assert len(results) == 1
+    assert results[0].subject == "Test subject 1 (・_・)"
 
 
 def test_start_of_day():

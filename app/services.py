@@ -41,11 +41,13 @@ def search_contact_emails(query: Query, form: FlaskForm) -> Query:
     if form.end_date.data:
         query = query.filter(ContactEmail.received_at <= end_of_day(form.end_date.data))  # type: ignore
     if form.keyword.data:
+        # ユーザー入力のキーワードに含まれる特殊文字(%, _)をエスケープする
+        keyword = f"%{form.keyword.data.replace('%', '\\%').replace('_', '\\_')}%"
         query = query.filter(
-            ContactEmail.content.like(f"%{form.keyword.data}%")  # type: ignore
-            | ContactEmail.name.like(f"%{form.keyword.data}%")  # type: ignore
-            | ContactEmail.kana.like(f"%{form.keyword.data}%")  # type: ignore
-            | ContactEmail.email.like(f"%{form.keyword.data}%")  # type: ignore
+            ContactEmail.content.like(keyword, escape="\\")  # type: ignore
+            | ContactEmail.name.like(keyword, escape="\\")  # type: ignore
+            | ContactEmail.kana.like(keyword, escape="\\")  # type: ignore
+            | ContactEmail.email.like(keyword, escape="\\")  # type: ignore
         )
     if form.type.data:
         query = query.filter(ContactEmail.contact_type == int(form.type.data))  # type: ignore
@@ -60,10 +62,12 @@ def search_job_emails(query: Query, form: FlaskForm) -> Query:
     if form.end_date.data:
         query = query.filter(JobEmail.received_at <= end_of_day(form.end_date.data))  # type: ignore
     if form.keyword.data:
+        # ユーザー入力のキーワードに含まれる特殊文字(%, _)をエスケープする
+        keyword = f"%{form.keyword.data.replace('%', '\\%').replace('_', '\\_')}%"
         query = query.filter(
-            JobEmail.content.like(f"%{form.keyword.data}%")  # type: ignore
-            | JobEmail.subject.like(f"%{form.keyword.data}%")  # type: ignore
-            | JobEmail.email.like(f"%{form.keyword.data}%")  # type: ignore
+            JobEmail.content.like(keyword, escape="\\")  # type: ignore
+            | JobEmail.subject.like(keyword, escape="\\")  # type: ignore
+            | JobEmail.email.like(keyword, escape="\\")  # type: ignore
         )
 
     return query
