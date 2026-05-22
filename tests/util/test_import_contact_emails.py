@@ -1,19 +1,24 @@
-import pytest
 from datetime import datetime
+
+import pytest
+
 from app.models import ContactEmail
 from util.import_contact_emails import generate_contact_emails, import_csv
+
 
 def test_generate_contact_emails_valid(tmp_path):
     """正常なCSV行から ContactEmail インスタンスが生成されること"""
     csv_content = (
         "その他,Test Content 1,Taro Yamada,たろう やまだ,taro@example.com,男性,192.168.1.1,2025.05.21 09:18:16\n"
-        "採用情報について,Test Content 2,Hanako Suzuki,はなこ すずき,hanako@example.com,女性,192.168.1.2,2025.05.22 10:20:30\n"
+        "採用情報について,Test Content 2,Hanako Suzuki,はなこ すずき,"
+        "hanako@example.com,女性,192.168.1.2,2025.05.22 10:20:30\n"
+        "その他,Test Content 3,No Gender,,nogender@example.com,,192.168.1.3,2025.05.23 11:30:40\n"
     )
     csv_file = tmp_path / "valid.csv"
     csv_file.write_text(csv_content, encoding="utf-8")
 
     emails = list(generate_contact_emails(str(csv_file)))
-    assert len(emails) == 2
+    assert len(emails) == 3
 
     email1 = emails[0]
     # 「その他」→ 5, 「男性」→ 1
@@ -37,6 +42,16 @@ def test_generate_contact_emails_valid(tmp_path):
     assert email2.ip == "192.168.1.2"
     assert email2.received_at == datetime.strptime("2025.05.22 10:20:30", "%Y.%m.%d %H:%M:%S")
 
+    email3 = emails[2]
+    assert email3.contact_type == 5
+    assert email3.content == "Test Content 3"
+    assert email3.name == "No Gender"
+    assert email3.kana == ""
+    assert email3.email == "nogender@example.com"
+    assert email3.gender is None
+    assert email3.ip == "192.168.1.3"
+    assert email3.received_at == datetime.strptime("2025.05.23 11:30:40", "%Y.%m.%d %H:%M:%S")
+
 
 def test_generate_contact_emails_invalid(tmp_path, capsys):
     """カラム数不足や不正な変換データがある場合に、その行がスキップされること"""
@@ -52,7 +67,8 @@ def test_generate_contact_emails_invalid(tmp_path, capsys):
         # 不明な問い合わせ種別（"未知の種別" はマッピングにない）
         "未知の種別,Content,Name,Kana,email@example.com,女性,192.168.1.4,2025.05.21 09:18:16\n"
         # もうひとつ有効な行
-        "採用情報について,Valid Content 2,Hanako Suzuki,はなこ すずき,hanako@example.com,女性,192.168.1.5,2025.05.22 10:20:30\n"
+        "採用情報について,Valid Content 2,Hanako Suzuki,はなこ すずき,"
+        "hanako@example.com,女性,192.168.1.5,2025.05.22 10:20:30\n"
     )
     csv_file = tmp_path / "invalid.csv"
     csv_file.write_text(csv_content, encoding="utf-8")
@@ -74,7 +90,10 @@ def test_generate_contact_emails_invalid(tmp_path, capsys):
 
     captured = capsys.readouterr().out
     # エラーの原因となった行のいずれかのエラーメッセージが出力されているはず
-    assert ("不正な形式の行をスキップ" in captured) or ("日付フォーマットのエラー" in captured) or ("不明な" in captured)
+    assert any(
+        message in captured
+        for message in ("不正な形式の行をスキップ", "日付フォーマットのエラー", "不明な")
+    )
 
 
 def test_generate_contact_emails_file_not_found(tmp_path):
@@ -88,7 +107,9 @@ def test_import_csv(app, db_session, tmp_path, capsys):
     """CSVファイルから DB へ問い合わせメールが正しくインポートされること"""
     csv_content = (
         "その他,Test Content Taro,John Doe,ジョン ドウ,john@example.com,男性,192.168.1.10,2025.05.20 08:00:00\n"
-        "採用情報について,Test Content Hanako,Jane Smith,ジェーン スミス,jane@example.com,女性,192.168.1.11,2025.05.21 09:30:00\n"
+        "採用情報について,Test Content Hanako,Jane Smith,ジェーン スミス,"
+        "jane@example.com,女性,192.168.1.11,2025.05.21 09:30:00\n"
+        "その他,Test Content Unknown,Unknown Gender,,unknown@example.com,,192.168.1.12,2025.05.22 10:30:00\n"
     )
     csv_file = tmp_path / "import.csv"
     csv_file.write_text(csv_content, encoding="utf-8")
@@ -101,7 +122,7 @@ def test_import_csv(app, db_session, tmp_path, capsys):
 
     # DB からインポート結果を検証
     emails = ContactEmail.query.all()
-    assert len(emails) == 2
+    assert len(emails) == 3
 
     email1 = emails[0]
     # 「その他」→ 5, 「男性」→ 1
@@ -124,3 +145,13 @@ def test_import_csv(app, db_session, tmp_path, capsys):
     assert email2.gender == 2
     assert email2.ip == "192.168.1.11"
     assert email2.received_at == datetime.strptime("2025.05.21 09:30:00", "%Y.%m.%d %H:%M:%S")
+
+    email3 = emails[2]
+    assert email3.contact_type == 5
+    assert email3.content == "Test Content Unknown"
+    assert email3.name == "Unknown Gender"
+    assert email3.kana == ""
+    assert email3.email == "unknown@example.com"
+    assert email3.gender is None
+    assert email3.ip == "192.168.1.12"
+    assert email3.received_at == datetime.strptime("2025.05.22 10:30:00", "%Y.%m.%d %H:%M:%S")

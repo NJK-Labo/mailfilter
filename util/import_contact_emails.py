@@ -2,11 +2,11 @@
 使い方：python -m util.import_contact_emails /path/to/your/csvfile.csv
 """
 
+import argparse
 import csv
 import os
 import sys
 from datetime import datetime
-import argparse
 
 from app import create_app, db
 from app.models import ContactEmail
@@ -31,9 +31,9 @@ def generate_contact_emails(csv_file_path: str):
     if not os.path.exists(csv_file_path):
         raise FileNotFoundError(f"指定されたCSVファイルが存在しません: {csv_file_path}")
 
-    with open(csv_file_path, 'r', encoding='utf-8') as csvfile:
-        # CSVのフィールド区切りはカンマ。値がダブルクォーテーションで囲まれている場合も、囲まれていない場合も自動で処理します。
-        reader = csv.reader(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+    with open(csv_file_path, "r", encoding="utf-8") as csvfile:
+        # CSVのフィールド区切りはカンマ。値がダブルクォーテーションで囲まれている場合も自動で処理します。
+        reader = csv.reader(csvfile, delimiter=",", quoting=csv.QUOTE_MINIMAL)
         for row in reader:
             # 空行はスキップ
             if not row:
@@ -52,7 +52,7 @@ def generate_contact_emails(csv_file_path: str):
                 email,
                 gender_str,
                 ip,
-                received_at_str
+                received_at_str,
             ) = row[:8]
 
             # 問い合わせ種別の変換
@@ -62,10 +62,14 @@ def generate_contact_emails(csv_file_path: str):
                 continue
 
             # 性別の変換
-            gender = GENDER_MAPPING.get(gender_str.strip())
-            if gender is None:
-                print(f"不明な性別をスキップ: {gender_str}")
-                continue
+            gender_value = gender_str.strip()
+            if gender_value == "":
+                gender = None
+            else:
+                gender = GENDER_MAPPING.get(gender_value)
+                if gender is None:
+                    print(f"不明な性別をスキップ: {gender_str}")
+                    continue
 
             # 受信日時のパース（例："2025.05.21 09:18:16"）
             try:
@@ -82,7 +86,7 @@ def generate_contact_emails(csv_file_path: str):
                 email=email.strip(),
                 gender=gender,
                 ip=ip.strip(),
-                received_at=received_at
+                received_at=received_at,
             )
 
 
@@ -102,9 +106,9 @@ def import_csv(csv_file_path: str) -> None:
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="CSVファイルから contact_emails テーブルへデータをインポートするスクリプト"
+        description="CSVファイルから contact_emails テーブルへデータをインポートするスクリプト",
     )
     parser.add_argument("csv_file", help="インポートするCSVファイルのパス")
     args = parser.parse_args()

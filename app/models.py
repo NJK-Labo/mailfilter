@@ -17,8 +17,8 @@ class ContactEmail(db.Model):  # type: ignore
     name: str = db.Column(db.String(200), nullable=False)
     kana: str = db.Column(db.String(200), nullable=False)
     email: str = db.Column(db.String(200), nullable=False)
-    # 性別（1: 男性, 2: 女性）
-    gender: int = db.Column(db.Integer, nullable=False)
+    # 性別（1: 男性, 2: 女性, None: 不明）
+    gender: int | None = db.Column(db.Integer, nullable=True)
     ip: str = db.Column(db.String(200), nullable=False)
     received_at: datetime = db.Column(db.DateTime, nullable=False, index=True, default=Config.now_jst)
 
