@@ -62,10 +62,14 @@ def generate_contact_emails(csv_file_path: str):
                 continue
 
             # 性別の変換
-            gender = GENDER_MAPPING.get(gender_str.strip())
-            if gender is None:
-                print(f"不明な性別をスキップ: {gender_str}")
-                continue
+            gender_value = gender_str.strip()
+            if gender_value == "":
+                gender = None
+            else:
+                gender = GENDER_MAPPING.get(gender_value)
+                if gender is None:
+                    print(f"不明な性別をスキップ: {gender_str}")
+                    continue
 
             # 受信日時のパース（例："2025.05.21 09:18:16"）
             try:

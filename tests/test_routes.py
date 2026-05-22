@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib.parse import urlparse
 
 from flask import url_for
@@ -41,6 +42,28 @@ def test_show_contact_email(client, init_contact_emails):
     assert response.status_code == 200
     assert b"Content1" in response.data
     assert b"testemail1" in response.data
+
+
+def test_show_contact_email_unknown_gender(client, db_session):
+    """性別が未設定の問い合わせメール詳細画面のテスト"""
+    contact_email = ContactEmail(
+        contact_type=1,
+        content="Gender Unknown Content",
+        name="性別不明",
+        kana="",
+        email="unknown-gender@example.com",
+        gender=None,
+        ip="192.168.1.10",
+        received_at=datetime(2025, 1, 1, 12, 0, 0),
+    )
+    db_session.add(contact_email)
+    db_session.commit()
+
+    response = client.get(f"/contact-emails/{contact_email.id}")
+
+    assert response.status_code == 200
+    assert "Gender Unknown Content".encode("utf-8") in response.data
+    assert "不明".encode("utf-8") in response.data
 
 
 def test_show_contact_email_not_found(client, init_contact_emails):
