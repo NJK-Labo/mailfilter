@@ -2,11 +2,11 @@
 使い方：python -m util.import_job_emails /path/to/your/csvfile.csv
 """
 
+import argparse
 import csv
 import os
 import sys
 from datetime import datetime
-import argparse
 
 from app import create_app, db
 from app.models import JobEmail
@@ -22,10 +22,10 @@ def generate_job_emails(csv_file_path: str):
     if not os.path.exists(csv_file_path):
         raise FileNotFoundError(f"指定されたCSVファイルが存在しません: {csv_file_path}")
 
-    with open(csv_file_path, 'r', encoding='utf-8') as csvfile:
-        # CSVのフィールド区切りはカンマです。値がダブルクォーテーションで囲まれている場合も、囲まれていない場合も自動的に処理します。
-        reader = csv.reader(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-        
+    with open(csv_file_path, "r", encoding="utf-8") as csvfile:
+        # CSVのフィールド区切りはカンマです。値がダブルクォーテーションで囲まれている場合も自動的に処理します。
+        reader = csv.reader(csvfile, delimiter=",", quoting=csv.QUOTE_MINIMAL)
+
         for row in reader:
             # 空行はスキップ
             if not row:
@@ -49,7 +49,7 @@ def generate_job_emails(csv_file_path: str):
                 subject=subject.strip(),
                 email=email.strip(),
                 content=content.strip(),
-                received_at=received_at
+                received_at=received_at,
             )
 
 
@@ -69,9 +69,9 @@ def import_csv(csv_file_path: str) -> None:
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="CSVファイルから job_emails テーブルへデータをインポートするスクリプト"
+        description="CSVファイルから job_emails テーブルへデータをインポートするスクリプト",
     )
     parser.add_argument("csv_file", help="インポートするCSVファイルのパス")
     args = parser.parse_args()
